@@ -91,7 +91,7 @@ $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
     checkboxClass: 'icheckbox_flat-green',
     radioClass: 'iradio_flat-green'
 }).on('ifChanged', function(e) {
-                // Get the field name
+    // Get the field name
     var field = $(this).attr('name');
     $(this).closest('form').bootstrapValidator('revalidateField', field);
 });
@@ -120,7 +120,60 @@ $('.save-form').click(function(e) {
 
     e.preventDefault();
 
-    $('#' + $(this).closest('form').attr('id')).bootstrapValidator('validate');
+    var form = '#' + $(this).closest('form').attr('id');
+
+    $(form).bootstrapValidator('validate');
+
+    var bv = $(form).data('bootstrapValidator');
+
+    //if (!bv.isValid()) return;
+
+    var formData = new FormData($(form)[0]);
+
+    var object = {};
+    formData.forEach((value, key) => {
+        if (!object.hasOwnProperty(key)) {
+            object[key] = value;
+            return;
+        }
+        if (!Array.isArray(object[key])) {
+            object[key] = [object[key]];
+        }
+        object[key].push(value);
+    });
+    var json = JSON.stringify(object);
+    console.log(json);
+
+    if(!navigator.onLine) sessionStorage.setItem(form, json);
+
+    else{
+
+        var files = $(form +' input[type="file"]');
+
+        files.each(function(){
+         
+            if(this.value != null && this.value != '') formData.append('*file*' + this.name, this.value);
+            else alert('No File');
+        });
+    }
+
+
+    $.ajax({
+            type:'POST',
+            dataType:'JSON',
+            cache: false,
+            contentType: false,
+            processData: false,
+            url:'index.php/Form/guardar',
+            data:formData,
+            success:function(rsp){
+                alert('Hecho');
+            },
+            error: function(rsp){  
+                alert('Error: '+ rsp.msj);
+                console.log(rsp.msj);
+            }
+        });
 
 });
 </script>

@@ -74,8 +74,23 @@
                 },
                 {
                     "tipo": "check",
-                    "label": "Acepto los Terminos y Condiciones del Servicio",
-                    "name": "contrato"
+                    "label": "Seleccionar Opción",
+                    "name": "contrato",
+                    "requerido":"true",
+                    "values":[
+                        {
+                            "value": "acepta",
+                            "label": "Acepto los Terminos y Condiciones del Servicio"
+                        },
+                        {
+                            "value": "acepta",
+                            "label": "Acepto los Terminos y Condiciones del Servicio"
+                        },
+                        {
+                            "value": "acepta",
+                            "label": "Acepto los Terminos y Condiciones del Servicio"
+                        }
+                    ]
                 },
                 {
                     "tipo": "file",
@@ -159,8 +174,23 @@
                 },
                 {
                     "tipo": "check",
-                    "label": "Acepto los Terminos y Condiciones del Servicio",
-                    "name": "contrato"
+                    "label": "Seleccionar Opción",
+                    "name": "contrato",
+                    "requerido":"true",
+                    "values":[
+                        {
+                            "value": "acepta",
+                            "label": "Acepto los Terminos y Condiciones del Servicio"
+                        },
+                        {
+                            "value": "acepta",
+                            "label": "Acepto los Terminos y Condiciones del Servicio"
+                        },
+                        {
+                            "value": "acepta",
+                            "label": "Acepto los Terminos y Condiciones del Servicio"
+                        }
+                    ]
                 },
                 {
                     "tipo": "file",
@@ -170,5 +200,6 @@
                 }
             ]
         }
+        
     ]
 }

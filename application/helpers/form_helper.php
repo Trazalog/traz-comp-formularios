@@ -15,7 +15,7 @@ if (!function_exists('form')) {
                     break;
 
                 case 'comentario':
-                    $html .= "<p class='text-danger'>$e->label</p>";
+                    $html .= "<p class='text-info'>$e->label</p>";
                     break;
 
                 case 'input':
@@ -55,7 +55,7 @@ if (!function_exists('form')) {
     {
         return
             "<div class='form-group'>
-                <label for=''>$e->label:</label>
+                <label for=''>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
                 <input class='form-control' type='text' placeholder='Escriba su Texto...' id='$e->name'  name='$e->name' " . ($e->requerido ? req() : null) . "/>
             </div>";
     }
@@ -69,7 +69,7 @@ if (!function_exists('form')) {
 
         return
             "<div class='form-group'>
-            <label for=''>$e->label:</label>
+            <label for=''>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
             <select class='form-control' name='$e->name'>$val</select>
         </div>";
     }
@@ -78,7 +78,7 @@ if (!function_exists('form')) {
     {
         return
             "<div class='form-group'>
-                <label for=''>$e->label:</label>
+                <label for=''>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
                 <input class='form-control datepicker' type='text' placeholder='dd/mm/aaaa' id='$e->name'  name='$e->name' " . ($e->requerido ? req() : null) . " data-bv-date-format='DD/MM/YYYY' data-bv-date-message='Formato de Fecha Inválido'/>
             </div>";
 
@@ -86,12 +86,18 @@ if (!function_exists('form')) {
 
     function check($e)
     {
-        return "<div class='form-group'>
-                <label>
-                  <input type='checkbox' class='flat-red' name='$e->name'>
-                 $e->label
-                </label>
-              </div>";
+        $html = '';
+        foreach ($e->values as $key => $o) {
+            $html .= "<div class='checkbox'>
+                                <label>
+                                    <input type='checkbox' name='$e->name[]' class='flat-red' value='$o->value' " . ($key == 0 && $e->requerido ? req() : null) . ">
+                                    $o->label
+                                </label>
+                            </div>";
+        }
+        return
+            "<div class='form-group'><label>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label><div style='margin-left: 10%;'> $html</div></div>";
+
     }
 
     function radio($e)
@@ -100,20 +106,20 @@ if (!function_exists('form')) {
         foreach ($e->values as $key => $o) {
             $html .= "<div class='radio'>
                         <label>
-                            <input type='radio' name='$e->name' class='flat-red' ".($key == 0 && $e->requerido ? req() : null).">
+                            <input type='radio' name='$e->name' class='flat-red' value='$o->value' ".($key == 0 && $e->requerido ? req() : null).">
                             $o->label
                         </label>
                     </div>";
         }
         return 
-        "<div class='form-group'><label>$e->label:</label><div style='margin-left: 30%;'> $html</div></div>";
+        "<div class='form-group'><label>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label><div style='margin-left: 10%;'> $html</div></div>";
     }
 
     function archivo($e)
     {
         return
             "<div class='form-group'>
-                  <label>$e->label:</label>
+                  <label>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
                   <input id='$e->name' type='file' name='$e->name' ".($e->requerido ? req() : null)
                   .">
                   <p class='help-block show-file' style='display: none;'><a class='help-button col-sm-4 download' title='Descargar' download><i
