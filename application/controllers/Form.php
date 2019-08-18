@@ -6,11 +6,17 @@ class Form extends CI_Controller
     {
 
         parent::__construct();
-        #$this->load->model('');
+        $this->load->model('Forms');
     }
     public function index()
     {
         # $this->load->view('');
+    }
+
+    public function obtener()
+    {
+        $data['form'] = $this->Forms->obtener(1);
+        $this->load->view('test', $data);
     }
 
     public function guardar()
@@ -28,7 +34,7 @@ class Form extends CI_Controller
 
         }
 
-        return json_encode('hilis');
+        echo json_encode(true);
     }
 
     public function uploadFile($nom)
@@ -38,7 +44,7 @@ class Form extends CI_Controller
         $conf = [
             'upload_path' => './files/',
             'allowed_types' => '*',
-            'upload_max_filesize'=>'*'
+            'max_size'=>'*'
         ];
 
         $this->load->library("upload", $conf);

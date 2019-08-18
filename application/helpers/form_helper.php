@@ -42,6 +42,10 @@ if (!function_exists('form')) {
                     $html .= archivo($e);
                     break;
 
+                case 'textarea':
+                    $html .= textarea($e);
+                    break;
+
                 default:
                     $html .= "<hr>";
                     break;
@@ -125,6 +129,15 @@ if (!function_exists('form')) {
                   <p class='help-block show-file' style='display: none;'><a class='help-button col-sm-4 download' title='Descargar' download><i
                     class='fa fa-download'></i> Ver Adjunto</a></p>
              </div>";
+    }
+
+    function textarea($e){
+        return
+         "<div class='form-group'>
+            <label>$e->label</label>
+            <textarea class='form-control' rows='3' placeholder='Ingrese Texto...' id='$e->name' type='file' name='$e->name' ".($e->requerido ? req() : null)
+            ."></textarea>
+        </div>";
     }
 
 }

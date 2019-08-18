@@ -1,13 +1,10 @@
-<?php
-$forms = getJson('form_test')->test;
-?>
 
 <div class="row">
     <div class="col-md-6">
         <div class="box box-primary">
             <div class="box-header">
                 <i class="ion ion-clipboard"></i>
-                <h3 class="box-title"><?php echo $forms[0]->nombre ?></h2>
+                <h3 class="box-title"><?php echo $form->nombre ?></h2>
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                             title="" data-original-title="Collapse">
@@ -20,18 +17,18 @@ $forms = getJson('form_test')->test;
             <div class="box-body">
                 <?php
 
-                echo form($forms[0]);
+                echo form($form);
 
                 ?>
             </div>
         </div>
     </div>
-    <div class="col-md-6">
+    <!-- <div class="col-md-6">
 
         <div class="box box-primary">
             <div class="box-header">
                 <i class="ion ion-clipboard"></i>
-                <h3 class="box-title"><?php echo $forms[1]->nombre ?></h2>
+                <h3 class="box-title"><?php #echo $forms[1]->nombre ?></h2>
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                             title="" data-original-title="Collapse">
@@ -44,12 +41,12 @@ $forms = getJson('form_test')->test;
             <div class="box-body">
                 <?php
 
-                echo form($forms[1]);
+                #echo form($form);
 
                 ?>
             </div>
         </div>
-    </div>
+    </div> -->
 </div>
 
 <script>
@@ -153,7 +150,7 @@ $('.save-form').click(function(e) {
         files.each(function(){
          
             if(this.value != null && this.value != '') formData.append('*file*' + this.name, this.value);
-            else alert('No File');
+           // else alert('No File');
         });
     }
 

@@ -9,7 +9,7 @@ class Dash extends CI_Controller {
    }
    function index(){
      
-      $data['menu'] = menu(file_get_contents("C:/xampp/htdocs/bpm/menu.json"));
+      $data['menu'] = null;//menu(file_get_contents("C:/xampp/htdocs/bpm/menu.json"));
 
       $data['link'] = def_view;
     

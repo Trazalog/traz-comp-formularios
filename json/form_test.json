@@ -65,10 +65,6 @@
                         {
                             "value": "mujer",
                             "label": "Mujer"
-                        },
-                        {
-                            "value": "indefinido",
-                            "label": "No estoy seguro"
                         }
                     ]
                 },
@@ -81,21 +77,20 @@
                         {
                             "value": "acepta",
                             "label": "Acepto los Terminos y Condiciones del Servicio"
-                        },
-                        {
-                            "value": "acepta",
-                            "label": "Acepto los Terminos y Condiciones del Servicio"
-                        },
-                        {
-                            "value": "acepta",
-                            "label": "Acepto los Terminos y Condiciones del Servicio"
                         }
+
                     ]
                 },
                 {
                     "tipo": "file",
                     "label": "Adjuntar Archivo",
                     "name": "pdf",
+                    "requerido":"true"
+                },
+                {
+                    "tipo":"textarea",
+                    "label":"Observaciones",
+                    "name":"observacion",
                     "requerido":"true"
                 }
             ]
