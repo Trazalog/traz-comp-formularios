@@ -19,7 +19,7 @@ class Form extends CI_Controller
         $this->load->view('test', $data);
     }
 
-    public function guardar()
+    public function guardar($form_id)
     {
         $data = $this->input->post();
 
@@ -29,18 +29,20 @@ class Form extends CI_Controller
             
             if($rsp > 0 )
             {
-                $data[$key] = $this->uploadFile($key);
+                $nom = str_replace("*file*", "", $key);
+                $data[$nom] = $this->uploadFile($nom);
+                unset($key);
             }
 
         }
+
+        $res = $this->Forms->guardar($form_id, $data);
 
         echo json_encode(true);
     }
 
     public function uploadFile($nom)
-    {
-        $nom = str_replace("*file*", "", $nom);
-            
+    {   
         $conf = [
             'upload_path' => './files/',
             'allowed_types' => '*',
@@ -57,7 +59,7 @@ class Form extends CI_Controller
 
         }
 
-        log_message('DEBUG','Archivo Subido con Existo'.$nom);
+        log_message('DEBUG','Archivo Subido con Exito '.$nom);
 
         return $this->upload->data()['file_name'];
 

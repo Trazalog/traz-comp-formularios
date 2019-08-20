@@ -10,12 +10,38 @@ class Forms extends CI_Model
         parent::__construct();
     }
 
-    // public function list()
-    // {
-    //     $this->db->select($this->columnas);
-    //     $this->db->where('delete',false);
-    //     return $this->db->get($this->tabla)->result_array();
-    // }
+    public function guardar($form_id, $data)
+    {
+        $items = $this->obtenerItems($form_id);
+
+        $newInfo = $this->db->select_max('info_id')->get('frm_instacias_formularios')->row('info_id') + 1;
+
+        $array = array();
+
+        foreach ($items as $o) {
+            if (!$o->name) {
+                continue;
+            }
+
+            $aux = new StdClass();
+
+            if (is_array($data[$o->name])) {
+                $aux->valor = implode('-', $data[$o->name]);
+            } else {
+                $aux->valor = $data[$o->name];
+            }
+
+            $aux->item_id = $o->item_id;
+
+            $aux->info_id = $newInfo;
+
+            array_push($array, $aux);
+        }
+
+        $this->db->insert_batch('frm_instacias_formularios', $array);
+
+        return;
+    }
 
     public function obtener($id)
     {
@@ -31,9 +57,9 @@ class Forms extends CI_Model
 
         foreach ($aux->plantilla as $key => $o) {
 
-            if($o->tipo == 'radio' || $o->tipo == 'check' || $o->tipo == 'select'){
+            if ($o->tipo == 'radio' || $o->tipo == 'check' || $o->tipo == 'select') {
 
-                $aux->plantilla[$key]->values =  $this->obtenerValores($o->valo_id);
+                $aux->plantilla[$key]->values = $this->obtenerValores($o->valo_id);
 
             }
         }
@@ -41,10 +67,17 @@ class Forms extends CI_Model
         return $aux;
     }
 
+    public function obtenerItems($id)
+    {
+        $this->db->select('item_id, name');
+        $this->db->where('form_id', $id);
+        return $this->db->get('frm_items')->result();
+    }
+
     public function obtenerValores($id)
     {
         $this->db->select('valor as value, valor as label');
-        return $this->db->get_where('utl_tablas', array('tabla'=> $id))->result();
+        return $this->db->get_where('utl_tablas', array('tabla' => $id))->result();
     }
 
     // public function insert($data)

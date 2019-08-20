@@ -161,7 +161,7 @@ $('.save-form').click(function(e) {
             cache: false,
             contentType: false,
             processData: false,
-            url:'index.php/Form/guardar',
+            url:'index.php/Form/guardar/1',
             data:formData,
             success:function(rsp){
                 alert('Hecho');
