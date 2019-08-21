@@ -24,13 +24,12 @@ class Forms extends CI_Model
 
             if ($o->name) {
 
-        
                 $o->valor = $data[$o->name];
                 $o->info_id = $newInfo;
-
                 array_push($array, $o);
 
             }else{
+                
                 $o->info_id = $newInfo;
                 array_push($aux, $o);
             }
@@ -62,22 +61,26 @@ class Forms extends CI_Model
         $aux = new StdClass();
         $aux->nombre = $this->db->get('frm_formularios')->row()->nombre;
         $aux->id = $id;
-
+        
         if ($info_id) {
-
             $aux->info_id = $info_id;
 
+            $this->db->select('name, label, requerido, tida_id, valo_id, orden, form_id, aux, valor, B.valor as tipo');
             $this->db->from('frm_instancias_formularios as A');
             $this->db->where('A.info_id', $info_id);
 
         } else {
+            $this->db->select('name, label, requerido, tida_id, valo_id, orden, form_id, aux, B.valor as tipo');
             $this->db->from('frm_items as A');
         }
 
-        $this->db->join('frm_tipos_datos as B', 'B.tida_id = A.tida_id');
+        $this->db->join('utl_tablas as B', 'B.tabl_id = A.tida_id');
         $this->db->where('A.form_id', $id);
         $this->db->where('A.eliminado', false);
         $this->db->order_by('A.orden');
+
+        #$query =  $this->db->get_compiled_select();
+
         $aux->plantilla = $this->db->get()->result();
 
         foreach ($aux->plantilla as $key => $o) {
