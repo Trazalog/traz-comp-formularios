@@ -10,7 +10,7 @@ class Test extends CI_Controller
 
     public function index()
     {
-        $data['form'] = $this->Forms->obtener(1);
+        $data['form'] = $this->Forms->obtener(1,1);
         $this->load->view('test', $data);
     }
 }

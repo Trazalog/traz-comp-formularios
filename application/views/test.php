@@ -99,7 +99,7 @@ $('input[type="file"]').on('change', function(e) {
 
     if (filename != "" && filename != null) {
 
-        var link = $(this).closest('.form-group').find('p').show();
+        var link = $(this).closest('.form-group').find('a').show();
         var file = e.target.files[0];
         var filename = e.target.files[0].name;
         var blob = new Blob([file]);
@@ -127,16 +127,29 @@ $('.save-form').click(function(e) {
 
     var formData = new FormData($(form)[0]);
 
+    var checkbox = $(form).find("input[type=checkbox]");
+
+    $.each(checkbox, function(key, val) {
+        if(!formData.has($(val).attr('name'))){
+            formData.append($(val).attr('name'), '');
+        }
+    });
+
     var object = {};
+
     formData.forEach((value, key) => {
+
         if (!object.hasOwnProperty(key)) {
             object[key] = value;
             return;
         }
+
         if (!Array.isArray(object[key])) {
             object[key] = [object[key]];
         }
+
         object[key].push(value);
+
     });
     var json = JSON.stringify(object);
     console.log(json);
@@ -148,7 +161,7 @@ $('.save-form').click(function(e) {
         var files = $(form +' input[type="file"]');
 
         files.each(function(){
-         
+            
             if(this.value != null && this.value != '') formData.append('*file*' + this.name, this.value);
            // else alert('No File');
         });
@@ -161,7 +174,7 @@ $('.save-form').click(function(e) {
             cache: false,
             contentType: false,
             processData: false,
-            url:'index.php/Form/guardar/1',
+            url:'index.php/Form/guardar/1/1',
             data:formData,
             success:function(rsp){
                 alert('Hecho');

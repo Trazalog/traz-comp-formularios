@@ -94,3 +94,5 @@ defined('EXIT__AUTO_MAX')      OR define('EXIT__AUTO_MAX', 125); // highest auto
 */
 define('def_view','test');
 
+define('files', 'files/');
+

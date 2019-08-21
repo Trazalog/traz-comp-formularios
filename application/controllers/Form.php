@@ -15,51 +15,62 @@ class Form extends CI_Controller
 
     public function obtener()
     {
-        $data['form'] = $this->Forms->obtener(1);
+        $data['form'] = $this->Forms->obtener(1, 1);
         $this->load->view('test', $data);
     }
 
-    public function guardar($form_id)
+    public function guardar($form_id, $info_id = false)
     {
         $data = $this->input->post();
 
         foreach ($data as $key => $o) {
-             
+
             $rsp = strpos($key, 'file');
-            
-            if($rsp > 0 )
-            {
+
+            if ($rsp > 0) {
                 $nom = str_replace("*file*", "", $key);
                 $data[$nom] = $this->uploadFile($nom);
                 unset($key);
             }
 
+            if (is_array($o)) {
+                $data[$key]  = implode('-', $o);
+            } 
+
         }
 
-        $res = $this->Forms->guardar($form_id, $data);
+        if ($info_id) {
+
+            $res = $this->Forms->actualizar($form_id, $info_id, $data);
+
+        } else {
+
+            $res = $this->Forms->guardar($form_id, $data);
+
+        }
 
         echo json_encode(true);
     }
 
     public function uploadFile($nom)
-    {   
+    {
         $conf = [
             'upload_path' => './files/',
             'allowed_types' => '*',
-            'max_size'=>'*'
+            'max_size' => '*',
         ];
 
         $this->load->library("upload", $conf);
 
-        if (!$this->upload->do_upload($nom)){
+        if (!$this->upload->do_upload($nom)) {
 
-            log_message('DEBUG','Error al Subir el Archivo '.$nom);
+            log_message('DEBUG', 'Error al Subir el Archivo ' . $nom);
 
             return false;
 
         }
 
-        log_message('DEBUG','Archivo Subido con Exito '.$nom);
+        log_message('DEBUG', 'Archivo Subido con Exito ' . $nom);
 
         return $this->upload->data()['file_name'];
 
