@@ -5,12 +5,12 @@ class Test extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('Forms');
+        $this->load->model(FRM.'Forms');
     }
 
     public function index()
     {
-        $data['form'] = $this->Forms->obtener(1);
+        $data['forms'] = $this->Forms->listado();
         $this->load->view('test', $data);
     }
 }

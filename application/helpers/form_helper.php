@@ -4,9 +4,9 @@ if (!function_exists('form')) {
     function form($data)
     {
 
-        $html = "<form id='$data->id' data-infoid='".(isset($data->info_id)?$data->info_id:null)."'>";
+        $html = "<form id='$data->id' data-info='".(isset($data->info_id)?$data->info_id:null)."'>";
 
-        foreach ($data->plantilla as $key => $e) {
+        foreach ($data->items as $key => $e) {
 
             switch ($e->tipo) {
 

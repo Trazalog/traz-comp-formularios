@@ -65,7 +65,7 @@ class Forms extends CI_Model
         if ($info_id) {
             $aux->info_id = $info_id;
 
-            $this->db->select('name, label, requerido, tida_id, valo_id, orden, form_id, aux, valor, B.valor as tipo');
+            $this->db->select('name, label, requerido, tida_id, valo_id, orden, form_id, aux, A.valor, B.valor as tipo');
             $this->db->from('frm_instancias_formularios as A');
             $this->db->where('A.info_id', $info_id);
 
@@ -81,13 +81,13 @@ class Forms extends CI_Model
 
         #$query =  $this->db->get_compiled_select();
 
-        $aux->plantilla = $this->db->get()->result();
+        $aux->items = $this->db->get()->result();
 
-        foreach ($aux->plantilla as $key => $o) {
+        foreach ($aux->items as $key => $o) {
 
             if ($o->tipo == 'radio' || $o->tipo == 'check' || $o->tipo == 'select') {
 
-                $aux->plantilla[$key]->values = $this->obtenerValores($o->valo_id);
+                $aux->items[$key]->values = $this->obtenerValores($o->valo_id);
 
             }
         }
@@ -108,5 +108,14 @@ class Forms extends CI_Model
     {
         $this->db->select('valor as value, valor as label');
         return $this->db->get_where('utl_tablas', array('tabla' => $id))->result();
+    }
+
+    public function listado()
+    {
+        $this->db->select('nombre, A.form_id, info_id');
+        $this->db->from('frm_instancias_formularios as A');
+        $this->db->join('frm_formularios as B', 'B.form_id = A.form_id');
+        $this->db->group_by('A.form_id');
+        return $this->db->get()->result();
     }
 }

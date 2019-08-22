@@ -4,19 +4,16 @@ class Form extends CI_Controller
 {
     public function __construct()
     {
-
         parent::__construct();
-        $this->load->model('Forms');
-    }
-    public function index()
-    {
-        # $this->load->view('');
+
+        $this->load->model(FRM.'Forms');
     }
 
-    public function obtener()
+    public function obtener($form, $info)
     {
-        $data['form'] = $this->Forms->obtener(1, 1);
-        $this->load->view('test', $data);
+        $data['html'] = form($this->Forms->obtener($form, $info));
+        
+        echo json_encode($data);
     }
 
     public function guardar($form_id, $info_id = false)
@@ -28,9 +25,9 @@ class Form extends CI_Controller
             $rsp = strpos($key, 'file');
 
             if ($rsp > 0) {
-                $nom = str_replace("*file*", "", $key);
+                $nom = str_replace("-file-", "", $key);
                 $data[$nom] = $this->uploadFile($nom);
-                unset($key);
+                unset($data[$key]);
             }
 
             if (is_array($o)) {

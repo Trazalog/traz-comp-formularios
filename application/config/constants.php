@@ -96,3 +96,5 @@ define('def_view','test');
 
 define('files', 'files/');
 
+define('FRM','traz-comp-form/');
+
