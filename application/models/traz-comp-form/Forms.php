@@ -10,7 +10,7 @@ class Forms extends CI_Model
         parent::__construct();
     }
 
-    public function guardar($form_id, $data)
+    public function guardar($form_id, $data = false)
     {
         $items = $this->obtenerPlantilla($form_id);
 
@@ -22,31 +22,25 @@ class Forms extends CI_Model
 
         foreach ($items as $key => $o) {
 
+            $o->info_id = $newInfo;
+
             if ($o->name) {
-
-                $o->valor = $data[$o->name];
-                $o->info_id = $newInfo;
+                $o->valor = $data ? $data[$o->name] : null;
                 array_push($array, $o);
-
-            }else{
-                
-                $o->info_id = $newInfo;
+            } else {
                 array_push($aux, $o);
             }
         }
 
-        $this->db->insert_batch('frm_instancias_formularios', $array);
         $this->db->insert_batch('frm_instancias_formularios', $aux);
-
-        return;
+        return $this->db->insert_batch('frm_instancias_formularios', $array);
     }
 
-    public function actualizar($form_id, $info_id, $data)
+    public function actualizar($info_id, $data)
     {
 
         foreach ($data as $key => $o) {
 
-            $this->db->where('form_id', $form_id);
             $this->db->where('info_id', $info_id);
             $this->db->where('name', $key);
             $this->db->set('valor', $o);
@@ -56,32 +50,23 @@ class Forms extends CI_Model
         return;
     }
 
-    public function obtener($id, $info_id = false)
+    public function obtener($info_id)
     {
-        $aux = new StdClass();
-        $aux->nombre = $this->db->get('frm_formularios')->row()->nombre;
-        $aux->id = $id;
-        
-        if ($info_id) {
-            $aux->info_id = $info_id;
-
-            $this->db->select('name, label, requerido, tida_id, valo_id, orden, form_id, aux, A.valor, B.valor as tipo');
-            $this->db->from('frm_instancias_formularios as A');
-            $this->db->where('A.info_id', $info_id);
-
-        } else {
-            $this->db->select('name, label, requerido, tida_id, valo_id, orden, form_id, aux, B.valor as tipo');
-            $this->db->from('frm_items as A');
-        }
-
+        $this->db->select('name, label, requerido, tida_id, valo_id, orden, A.form_id, aux, A.valor, B.valor as tipo, C.nombre');
+        $this->db->from('frm_instancias_formularios as A');
         $this->db->join('utl_tablas as B', 'B.tabl_id = A.tida_id');
-        $this->db->where('A.form_id', $id);
+        $this->db->join('frm_formularios as C', 'C.form_id = A.form_id');
+        $this->db->where('A.info_id', $info_id);
         $this->db->where('A.eliminado', false);
         $this->db->order_by('A.orden');
 
-        #$query =  $this->db->get_compiled_select();
+        $res = $this->db->get();
 
-        $aux->items = $this->db->get()->result();
+        $aux = new StdClass();
+        $aux->info_id = $info_id;
+        $aux->nombre = $res->row()->nombre;
+        $aux->id = $info_id;
+        $aux->items = $res->result();
 
         foreach ($aux->items as $key => $o) {
 
@@ -97,11 +82,34 @@ class Forms extends CI_Model
 
     public function obtenerPlantilla($id)
     {
-        $this->db->select('name, label, requerido, tida_id, valo_id, orden, form_id, aux');
-        $this->db->where('form_id', $id);
-        $this->db->where('eliminado', false);
-        $this->db->order_by('orden');
-        return $this->db->get('frm_items')->result();
+        $this->db->select('name, label, requerido, tida_id, valo_id, orden, A.form_id, aux, B.valor as tipo, C.nombre');
+        $this->db->from('frm_items as A');
+        $this->db->join('utl_tablas as B', 'B.tabl_id = A.tida_id');
+        $this->db->join('frm_formularios as C', 'C.form_id = A.form_id');
+        $this->db->where('A.form_id', $id);
+        $this->db->where('A.eliminado', false);
+        $this->db->order_by('A.orden');
+
+        $res = $this->db->get();
+
+        $newInfo = $this->db->select_max('info_id')->get('frm_instancias_formularios')->row('info_id') + 1;
+        
+        $aux = new StdClass();
+        $aux->info_id = $newInfo;
+        $aux->nombre = $res->row()->nombre;
+        $aux->id = $newInfo; 
+        $aux->items = $res->result();
+
+        foreach ($aux->items as $key => $o) {
+
+            if ($o->tipo == 'radio' || $o->tipo == 'check' || $o->tipo == 'select') {
+
+                $aux->items[$key]->values = $this->obtenerValores($o->valo_id);
+
+            }
+        }
+
+        return $aux;
     }
 
     public function obtenerValores($id)
@@ -117,5 +125,10 @@ class Forms extends CI_Model
         $this->db->join('frm_formularios as B', 'B.form_id = A.form_id');
         $this->db->group_by('A.form_id');
         return $this->db->get()->result();
+    }
+
+    public function html($form)
+    {
+        return form($this->obtenerPlantilla($form));
     }
 }

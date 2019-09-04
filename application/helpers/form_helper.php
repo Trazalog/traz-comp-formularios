@@ -1,10 +1,9 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
 if (!function_exists('form')) {
-    function form($data)
-    {
-
-        $html = "<form id='$data->id' data-info='".(isset($data->info_id)?$data->info_id:null)."'>";
+    function form($data, $modal = false)
+    {   
+        $html = "<form id='frm-".(isset($data->id)?$data->id:null)."' data-info='".(isset($data->info_id)?$data->info_id:null)."'>";
 
         foreach ($data->items as $key => $e) {
 
@@ -52,7 +51,7 @@ if (!function_exists('form')) {
             }
         }
 
-        return $html . '<button class="btn btn-primary pull-right save-form">Guardar</button></form>';
+        return $html . '<button class="btn btn-primary pull-right frm-save '.($modal?'hidden':null).'" onclick="frmGuardar(this)">Guardar</button></form>';
     }
 
     function input($e)
@@ -74,7 +73,7 @@ if (!function_exists('form')) {
         return
             "<div class='form-group'>
             <label for=''>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
-            <select class='form-control' name='$e->name'>$val</select>
+            <select class='form-control frm-select' name='$e->name'>$val</select>
         </div>";
     }
 
@@ -94,7 +93,7 @@ if (!function_exists('form')) {
         foreach ($e->values as $key => $o) {
             $html .= "<div class='checkbox'>
                                 <label>
-                                    <input type='checkbox' name='$e->name[]' class='flat-red' value='$o->value' " . ($key == 0 && $e->requerido ? req() : null) . ((isset($e->valor) && strpos("_".$e->valor,$o->value)>0?' checked':null)).">
+                                    <input type='checkbox' name='$e->name[]' class='flat-red i-check' value='$o->value' " . ($key == 0 && $e->requerido ? null : null) . ((isset($e->valor) && strpos("_".$e->valor,$o->value)>0?' checked':null)).">
                                     $o->label
                                 </label>
                             </div>";
@@ -111,7 +110,7 @@ if (!function_exists('form')) {
         foreach ($e->values as $key => $o) {
             $html .= "<div class='radio'>
                         <label>
-                            <input type='radio' name='$e->name' class='flat-red' value='$o->value' ".($key == 0 && $e->requerido ? req() : null)." ".((isset($e->valor) && $e->valor== $o->value)?'checked':null).">
+                            <input type='radio' name='$e->name' class='flat-red i-check' value='$o->value' ".($key == 0 && $e->requerido ? null : null)." ".((isset($e->valor) && $e->valor== $o->value)?'checked':null).">
                             $o->label
                         </label>
                     </div>";
@@ -136,7 +135,7 @@ if (!function_exists('form')) {
         return
             "<div class='form-group'>
                   <label>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
-                  <input id='$e->name' type='file' name='$e->name' ".($e->requerido ? req() : null)
+                  <input id='$e->name' type='file' name='-file-$e->name' ".($e->requerido ? req() : null)
                   .">
                   <p class='help-block show-file'><a $file class='help-button col-sm-4 download' title='Descargar' download><i
                     class='fa fa-download'></i> Ver Adjunto</a></p>

@@ -9,24 +9,37 @@ class Form extends CI_Controller
         $this->load->model(FRM.'Forms');
     }
 
-    public function obtener($form, $info)
+    public function obtener($info, $modal = false)
     {
-        $data['html'] = form($this->Forms->obtener($form, $info));
+
+        $html = form($this->Forms->obtener($info), $modal);
+
+        if($modal)
+        {
+            $modal = new StdClass();
+            $modal->id = "frm-modal-$info";
+            $modal->titulo = 'Formulario Tarea';
+            $modal->body = $html;
+            $modal->accion = 'Guardar';
+
+            $html = modal($modal);
+        }
+
+        $data['html'] = $html;
         
         echo json_encode($data);
     }
 
-    public function guardar($form_id, $info_id = false)
+    public function guardar($info_id = false)
     {
         $data = $this->input->post();
-
         foreach ($data as $key => $o) {
 
             $rsp = strpos($key, 'file');
 
             if ($rsp > 0) {
                 $nom = str_replace("-file-", "", $key);
-                $data[$nom] = $this->uploadFile($nom);
+                $data[$nom] = $this->uploadFile($key);
                 unset($data[$key]);
             }
 
@@ -38,7 +51,38 @@ class Form extends CI_Controller
 
         if ($info_id) {
 
-            $res = $this->Forms->actualizar($form_id, $info_id, $data);
+            $res = $this->Forms->actualizar($info_id, $data);
+
+        } else {
+
+            $res = $this->Forms->guardar($form_id, $data);
+
+        }
+
+        echo json_encode(true);
+    }
+
+    public function guardarJson($info_id = false){
+        
+        $data = json_decode($this->input->post('json'), true);
+
+        foreach ($data as $key => $o) {
+
+            if(strpos($key, '[]')) {
+                $nkey = str_replace('[]', "", $key);
+                if(is_array($o)){
+                    $data[$nkey] = implode('-', $o);
+                }else{
+                    $data[$nkey] = $o;
+                }
+                unset($data[$key]);
+            }
+            
+        }
+
+        if ($info_id) {
+
+            $res = $this->Forms->actualizar($info_id, $data);
 
         } else {
 
@@ -61,15 +105,16 @@ class Form extends CI_Controller
 
         if (!$this->upload->do_upload($nom)) {
 
-            log_message('DEBUG', 'Error al Subir el Archivo ' . $nom);
+            log_message('ERROR', 'Error al Subir el Archivo ' . $nom);
 
             return false;
 
+        }else{
+            
+            log_message('DEBUG', 'Archivo Subido con Exito ' . $nom);
+
+            return $this->upload->data()['file_name'];
         }
-
-        log_message('DEBUG', 'Archivo Subido con Exito ' . $nom);
-
-        return $this->upload->data()['file_name'];
 
     }
 }
