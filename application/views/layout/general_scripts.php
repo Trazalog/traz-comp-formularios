@@ -37,7 +37,7 @@ $.widget.bridge('uibutton', $.ui.button);
        <!-- iCheck 1.0.1 -->
        <script src="<?php base_url();?>lib/plugins/iCheck/icheck.min.js"></script>
 
-         <script src="<?php  echo base_url();?>lib/bootstrapValidator/bootstrapValidator.min.js"></script>
+       <script src="<?php  echo base_url();?>lib/bootstrapValidator/bootstrapValidator.min.js"></script>
 
        <script>
 jQuery.fn.single_double_click = function(single_click_callback, double_click_callback, timeout) {
@@ -57,6 +57,18 @@ jQuery.fn.single_double_click = function(single_click_callback, double_click_cal
                 }, timeout || 300);
             }
         });
+    });
+}
+
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw1.js').then(function() {
+            console.log('Service Worker Registrado');
+            if (!navigator.serviceWorker.controller) {
+                location.reload();
+            }
+        })
     });
 }
        </script>
