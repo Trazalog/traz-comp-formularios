@@ -7,42 +7,12 @@
 </div>
 <button class="btn btn-primary" onclick="check()">Check</button>
 
-
 <script>
-function check() {
-    if (window.mobileAndTabletcheck()) {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(success, error, options);
-        } else {
-            alert('GSP no Activado');
-        }
-    }
+function check(){
+    if (!window.mobileAndTabletcheck()) {console.log('GPS | No Mobile'); return;}
+
+    if(obtenerPosicion()) alert('LAT: ' + lat + ' - LON: ' + lon + ' - ACC: ' + ac);
+    else alert('GPS | No se pudo Obtener Ubicación, Por favor Activar el GPS del Dispositivo.');
+    //alert('Para Ejecutar la Orden de Trabajo debe, Encender el GSP.');
 }
-
-var options = {
-    enableHighAccuracy: true,
-    timeout: 5000,
-    maximumAge: 0
-};
-
-var lat = false;
-var lon = false;
-function success(pos) {
-    var crd = pos.coords;
-    alert('Lati : ' + crd.latitude + '- Long: ' + crd.longitude + ' Aprox: ' + crd.accuracy);
-    if((cdr.accuracy != null) || (cdr.acurrary < 50)){
-        console.log('More or less ' + crd.accuracy + ' meters.');
-        lat = crd.latitude;
-        lon = crd.longitude;
-    }else{
-        alert('Para Ejecutar la Orden de Trabajo debe, Encender el GSP.');
-        lat = false;
-        lon = false;
-    }
-};
-
-function error(err) {
-    alert('Para Ejecutar la Orden de Trabajo debe, Encender el GSP.');
-    console.log('ERROR(' + err.code + '): ' + err.message);
-};
 </script>

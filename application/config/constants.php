@@ -98,3 +98,6 @@ define('files', 'files/');
 
 define('FRM','traz-comp-form/');
 
+//OFFLINE
+define('SW', false);
+
