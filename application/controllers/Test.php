@@ -19,4 +19,22 @@ class Test extends CI_Controller
         $this->load->view('test', $data);
         $this->load->view(FRM.'scripts');
     }
+
+    public function A()
+    {
+        echo 'A';
+    }
+    public function B()
+    {
+        echo 'B';
+    }
+    public function C()
+    {
+        echo 'C';
+    }
+
+    public function conexion()
+    {
+        return true;
+    }
 }

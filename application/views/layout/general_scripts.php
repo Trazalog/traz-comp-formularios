@@ -39,45 +39,12 @@ $.widget.bridge('uibutton', $.ui.button);
 
        <script src="<?php  echo base_url();?>lib/bootstrapValidator/bootstrapValidator.min.js"></script>
 
-       <script>
-jQuery.fn.single_double_click = function(single_click_callback, double_click_callback, timeout) {
-    return this.each(function() {
-        var clicks = 0,
-            self = this;
-        jQuery(this).click(function(event) {
-            clicks++;
-            if (clicks == 1) {
-                setTimeout(function() {
-                    if (clicks == 1) {
-                        single_click_callback.call(self, event);
-                    } else {
-                        double_click_callback.call(self, event);
-                    }
-                    clicks = 0;
-                }, timeout || 300);
-            }
-        });
-    });
-}
 
 
-    <?php
-if (SW) {
-    ?>
-    console.log('SW | Service Worker Activado');
 
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw1.js').then(function() {
-                console.log('SW | Service Worker Registrado');
-                if (!navigator.serviceWorker.controller) {
-                    location.reload();
-                }
-            })
-        });
-    } <?php
-}?>
-       </script>
+
+        <?php $this->load->view('layout/sw') ?>
+
 
        <script src="<?php echo base_url() ?>lib/props/gps.js"></script>
        <script src="<?php echo base_url() ?>lib/props/offline.js"></script>
@@ -87,7 +54,7 @@ if (SW) {
 Offline.options = {
     checks: {
         xhr: {
-            url: '/index.php/Test'
+            url: '<?php echo base_url() ?>index.php/Test/conexion'
         }
     }
 };

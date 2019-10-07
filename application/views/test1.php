@@ -1,42 +1,49 @@
-<div class="box box-primary">
-<div class="box-body">
-<div class="row">
-    <div class="col-md-6">
-        <div class="form-group">
-            <label for="">Nombre:</label>
-            <input type="text" class="form-control">
-        </div>
-         <div class="form-group">
-            <label for="">Nombre:</label>
-            <input type="text" class="form-control">
-        </div>
-         <div class="form-group">
-            <label for="">Nombre:</label>
-            <input type="text" class="form-control">
-        </div>
-         <div class="form-group">
-            <label for="">Nombre:</label>
-            <input type="text" class="form-control">
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="form-group">
-            <label for="">Nombre:</label>
-            <input type="text" class="form-control">
-        </div>
-         <div class="form-group">
-            <label for="">Nombre:</label>
-            <input type="text" class="form-control">
-        </div>
-         <div class="form-group">
-            <label for="">Nombre:</label>
-            <input type="text" class="form-control">
-        </div>
-         <div class="form-group">
-            <label for="">Nombre:</label>
-            <input type="text" class="form-control">
-        </div>
-    </div>
+
+<div id="ban">
 </div>
-</div>
-</div>
+
+<button class="btn btn-primary" onclick="A()">A</button>
+<button class="btn btn-primary" onclick="B()">B</button>
+<button class="btn btn-primary" onclick="C()">C</button>
+
+<script>
+    function A() {
+        $.ajax({
+                type:'GET',
+                url:'index.php/Test/A',
+                success:function(rsp){
+                    $('#ban').html(rsp);
+                },
+                error: function(rsp){  
+                    alert('Error: '+ rsp.msj);
+                    console.log(rsp.msj);
+                }
+            });
+    }
+    function B() {
+        $.ajax({
+                type:'GET',
+                url:'index.php/Test/B',
+                success:function(rsp){
+                    $('#ban').html(rsp);
+                },
+                error: function(rsp){  
+                    alert('Error: '+ rsp.msj);
+                    console.log(rsp.msj);
+                }
+            });
+    }
+    function C() {
+        $.ajax({
+                type:'GET',
+                url:'index.php/Test/C',
+                success:function(rsp){
+                    $('#ban').html(rsp);
+                },
+                error: function(rsp){  
+                    alert('Error: '+ rsp.msj);
+                    console.log(rsp.msj);
+                }
+            });
+    }
+</script>
