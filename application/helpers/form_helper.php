@@ -73,7 +73,7 @@ if (!function_exists('form')) {
 
     function select($e)
     {
-        $val = '<option value=""> -Seleccionar- </option>';
+        $val = '<option value=""> - Seleccionar - </option>';
         foreach ($e->values as $o) {
             $val .= "<option value='$o->value' " . ((isset($e->valor) && $e->valor == $o->value) ? 'selected' : null) . ">$o->label</option>";
         }
@@ -153,7 +153,7 @@ if (!function_exists('form')) {
     {
         return
             "<div class='form-group'>
-            <label>$e->label</label>
+            <label>$e->label:</label>
             <textarea class='form-control' rows='3' placeholder='Ingrese Texto...' id='$e->name' type='file' name='$e->name' " . ($e->requerido ? req() : null)
             . ">" . (isset($e->valor) ? $e->valor : null) . "</textarea>
         </div>";

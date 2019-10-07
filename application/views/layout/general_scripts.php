@@ -41,27 +41,29 @@ $.widget.bridge('uibutton', $.ui.button);
 
        <script>
 jQuery.fn.single_double_click = function(single_click_callback, double_click_callback, timeout) {
-        return this.each(function() {
-            var clicks = 0,
-                self = this;
-            jQuery(this).click(function(event) {
-                clicks++;
-                if (clicks == 1) {
-                    setTimeout(function() {
-                        if (clicks == 1) {
-                            single_click_callback.call(self, event);
-                        } else {
-                            double_click_callback.call(self, event);
-                        }
-                        clicks = 0;
-                    }, timeout || 300);
-                }
-            });
+    return this.each(function() {
+        var clicks = 0,
+            self = this;
+        jQuery(this).click(function(event) {
+            clicks++;
+            if (clicks == 1) {
+                setTimeout(function() {
+                    if (clicks == 1) {
+                        single_click_callback.call(self, event);
+                    } else {
+                        double_click_callback.call(self, event);
+                    }
+                    clicks = 0;
+                }, timeout || 300);
+            }
         });
-    }
+    });
+}
 
 
-    <?php if(SW) {?>
+    <?php
+if (SW) {
+    ?>
     console.log('SW | Service Worker Activado');
 
     if ('serviceWorker' in navigator) {
@@ -73,7 +75,35 @@ jQuery.fn.single_double_click = function(single_click_callback, double_click_cal
                 }
             })
         });
-    } <?php } ?>
+    } <?php
+}?>
        </script>
 
        <script src="<?php echo base_url() ?>lib/props/gps.js"></script>
+       <script src="<?php echo base_url() ?>lib/props/offline.js"></script>
+
+
+       <script>
+Offline.options = {
+    checks: {
+        xhr: {
+            url: '/index.php/Test'
+        }
+    }
+};
+
+//OFFLINE SETTING
+Offline.on('up', function() {
+    $('#conexion').removeClass('text-danger').addClass('text-green');
+});
+
+Offline.on('down', function() {
+    $('#conexion').removeClass('text-green').addClass('text-danger');
+});
+
+var run = function() {
+    if (Offline.state === 'up')
+        Offline.check();
+}
+setInterval(run, 5000);
+       </script>

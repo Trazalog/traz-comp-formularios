@@ -114,7 +114,7 @@ class Forms extends CI_Model
 
     public function obtenerValores($id)
     {
-        $this->db->select('valor as value, valor as label');
+        $this->db->select('valor as value, descripcion as label');
         return $this->db->get_where('utl_tablas', array('tabla' => $id))->result();
     }
 
