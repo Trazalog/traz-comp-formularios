@@ -1,7 +1,7 @@
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js'); workbox.loadModule('workbox-strategies');
 var messageData = "";
 var cacheName = 'traz-comp-form';
-var base_url = 'http://localhost/traz-comp-formularios/';
+var base_url = 'https://192.168.0.101/traz-comp-formularios/';
 const NF = new workbox.strategies.NetworkFirst({
     cacheName: cacheName + '-cache'
 });

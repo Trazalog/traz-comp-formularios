@@ -21,7 +21,7 @@ if(SW) { ?>
 
 
 //Precacheo
-base_url = "<?php echo base_url() ?>";
+base_url = "<?php echo base_url() ?>index.php/";
 if (!indexedDB) {
     alert("Este browser no soporta IndexedDB, necesita otro para poder utilizar la aplicación.");
 }
@@ -34,9 +34,9 @@ indexedDB.open('tcf-ajax').onupgradeneeded = function(event) {
 }
 
 var catch_url = [
-      base_url + 'index.php/Test/A',
-      base_url + 'index.php/Test/B',
-      base_url + 'index.php/Test/C',
+      base_url + 'Test/A',
+      base_url + 'Test/B',
+      base_url + 'Test/C',
 ]
 
  caches.open('tcf-cache').then(function(cache) {
