@@ -127,8 +127,28 @@ class Forms extends CI_Model
         return $this->db->get()->result();
     }
 
-    public function html($form)
+    public function crear($nombre)
     {
-        return form($this->obtenerPlantilla($form));
+        $data['nombre'] = $nombre; 
+        $this->db->insert('frm_formularios', $data);
+        return $this->db->insert_id();
+    }
+
+    public function agregarItem($data)
+    {
+        $this->db->select_max('orden');
+        $this->db->where('form_id', $data['form_id']);
+        $orden = $this->db->get('frm_items')->row('orden') + 1;
+        $tida = $this->db->get_where('utl_tablas', ['valor' => $data['item']])->row('tabl_id');
+        $data = array(
+            'label' => $data['label'],
+            'name' => $data['name'],
+            'requerido' => isset($data['requerido']),
+            'tida_id' => $tida,
+            'valo_id' => isset($data['opciones'])?$data['opciones']:null,
+            'form_id' => $data['form_id'],
+            'orden' => $orden
+        );
+        return $this->db->insert('frm_items', $data);
     }
 }

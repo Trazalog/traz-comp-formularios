@@ -2,7 +2,6 @@
 var modal = true;
 
 function initForm() {
-
     $('form').each(function() {
 
         $(this).bootstrapValidator({
@@ -268,13 +267,11 @@ function formToJson(formData) {
     return JSON.stringify(object);
 }
 
-function showFD(formData){
+function showFormData(formData){
     for (var pair of formData.entries()) {
         console.log(pair[0] + ', ' + pair[1]);
     }
 }
-
-
 </script>
 
 

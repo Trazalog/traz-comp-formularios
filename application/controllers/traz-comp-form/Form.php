@@ -117,4 +117,19 @@ class Form extends CI_Controller
         }
 
     }
+
+    public function crear()
+    {
+        $nombre = $this->input->post('nombre');
+        $data['id'] = $this->Forms->crear($nombre);
+        echo json_encode($data);
+    }
+
+    public function agregarItem()
+    {
+        $data = $this->input->post();
+        $this->Forms->agregarItem($data);
+        $data['html'] = form($this->Forms->obtenerPlantilla($data['form_id']));
+        echo json_encode($data);
+    }
 }

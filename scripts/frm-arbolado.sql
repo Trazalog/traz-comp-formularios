@@ -42,7 +42,7 @@ CREATE TABLE `frm_formularios` (
 --
 
 INSERT INTO `frm_formularios` (`form_id`, `nombre`, `descripcion`, `empr_id`, `fec_alta`, `eliminado`) VALUES
-(1, 'Formulario Usuario', '-', 1, '2019-08-17 14:24:38', 0),
+
 (2, 'Formulario Arbolado', NULL, 1, '2019-09-03 23:52:30', 0);
 
 -- --------------------------------------------------------
@@ -127,32 +127,23 @@ CREATE TABLE `frm_items` (
 -- Volcado de datos para la tabla `frm_items`
 --
 
-INSERT INTO `frm_items` (`item_id`, `label`, `name`, `requerido`, `tida_id`, `valo_id`, `form_id`, `orden`, `fec_alta`, `eliminado`, `aux`) VALUES
-(1, 'Complete todos los campos del formulario *', NULL, NULL, '2', NULL, 1, 1, '2019-08-17 14:27:38', 0, NULL),
-(2, 'Nombre', 'nombre', 1, '3', NULL, 1, 2, '2019-08-17 14:28:46', 0, NULL),
-(3, 'Apellido', 'apellido', 1, '3', NULL, 1, 3, '2019-08-17 14:28:46', 0, NULL),
-(4, 'Fecha Nacimiento', 'fecha_nacimiento', 1, '5', NULL, 1, 4, '2019-08-17 14:32:37', 0, NULL),
-(5, 'Email', 'email', 1, '3', NULL, 1, 5, '2019-08-17 14:34:08', 0, NULL),
-(6, 'Seleccionar Provincia', 'provincia', 1, '4', 'provincias', 1, 6, '2019-08-17 14:34:57', 0, NULL),
-(7, 'Seleccionar Sexo', 'sexo', 1, '7', 'sexos', 1, 7, '2019-08-17 15:40:06', 0, NULL),
-(8, 'Seleccionar Opcion', 'contrato', 1, '6', 'contratos', 1, 8, '2019-08-17 15:40:06', 0, NULL),
-(9, 'Adjuntar Archivo', 'pdf', 1, '8', NULL, 1, 9, '2019-08-17 15:42:37', 0, NULL),
-(10, 'Observaciones', 'observaciones', 1, '9', NULL, 1, 10, '2019-08-17 15:42:37', 0, NULL),
-(11, 'Complete Datos de Manzana:', NULL, NULL, '26', NULL, 2, 1, '2019-09-03 23:52:39', 0, NULL),
-(12, 'Calle', 'calle', NULL, '4', 'calles', 2, 2, '2019-09-03 23:56:01', 0, NULL),
-(13, 'Calle', 'calle_manual', NULL, '3', NULL, 2, 3, '2019-09-03 23:56:47', 0, NULL),
-(14, 'Número', 'numero_calle', NULL, '3', NULL, 2, 4, '2019-09-03 23:57:44', 0, NULL),
-(15, 'Barrio', 'barrio', NULL, '3', NULL, 2, 5, '2019-09-03 23:59:09', 0, NULL),
-(16, 'Taza', 'taza', NULL, '4', 'tazas', 2, 6, '2019-09-04 00:11:39', 0, NULL),
-(17, 'Nombre Cientifíco/Común', 'nombre', NULL, '4', 'nombres_arboles', 2, 7, '2019-09-04 00:13:39', 0, NULL),
-(18, 'Otro', 'otro_nombre', NULL, '3', NULL, 2, 8, '2019-09-04 00:14:21', 0, NULL),
-(19, 'Alineación del Árbol', 'alineacion', NULL, '4', 'alineacion_arbol', 2, 9, '2019-09-04 00:15:57', 0, NULL),
-(20, 'Estado Físico', NULL, NULL, '26', NULL, 2, 10, '2019-09-04 00:20:30', 0, NULL),
-(21, 'Raíces', 'estado_raices', NULL, '7', 'estado_raices', 2, 11, '2019-09-04 00:22:53', 0, NULL),
-(22, 'Seleccione Daño', 'dano', NULL, '4', 'danos', 2, 12, '2019-09-04 00:31:51', 0, NULL),
-(23, 'Fuste', 'fuste', NULL, '7', 'fuste', 2, 13, '2019-09-04 00:33:26', 0, NULL),
-(24, 'Cavidad expuesta', 'cavidad_expuesta', NULL, '7', 'cavidad', 2, 14, '2019-09-04 00:40:28', 0, NULL),
-(25, 'Tamaño', 'cavidad_tamano', NULL, '4', 'cavidad_tamano', 2, 15, '2019-09-04 00:43:44', 0, NULL);
+INSERT INTO `frm_items` (`label`, `name`, `requerido`, `tida_id`, `valo_id`, `form_id`, `orden`, `fec_alta`, `eliminado`, `aux`) VALUES
+
+('Complete Datos de Manzana:', NULL, NULL, '26', NULL, 2, 1, '2019-09-03 23:52:39', 0, NULL),
+('Calle', 'calle', NULL, '4', 'calles', 2, 2, '2019-09-03 23:56:01', 0, NULL),
+('Calle', 'calle_manual', NULL, '3', NULL, 2, 3, '2019-09-03 23:56:47', 0, NULL),
+('Número', 'numero_calle', NULL, '3', NULL, 2, 4, '2019-09-03 23:57:44', 0, NULL),
+('Barrio', 'barrio', NULL, '3', NULL, 2, 5, '2019-09-03 23:59:09', 0, NULL),
+('Taza', 'taza', NULL, '4', 'tazas', 2, 6, '2019-09-04 00:11:39', 0, NULL),
+('Nombre Cientifíco/Común', 'nombre', NULL, '4', 'nombres_arboles', 2, 7, '2019-09-04 00:13:39', 0, NULL),
+('Otro', 'otro_nombre', NULL, '3', NULL, 2, 8, '2019-09-04 00:14:21', 0, NULL),
+('Alineación del Árbol', 'alineacion', NULL, '4', 'alineacion_arbol', 2, 9, '2019-09-04 00:15:57', 0, NULL),
+('Estado Físico', NULL, NULL, '26', NULL, 2, 10, '2019-09-04 00:20:30', 0, NULL),
+('Raíces', 'estado_raices', NULL, '7', 'estado_raices', 2, 11, '2019-09-04 00:22:53', 0, NULL),
+('Seleccione Daño', 'dano', NULL, '4', 'danos', 2, 12, '2019-09-04 00:31:51', 0, NULL),
+('Fuste', 'fuste', NULL, '7', 'fuste', 2, 13, '2019-09-04 00:33:26', 0, NULL),
+('Cavidad expuesta', 'cavidad_expuesta', NULL, '7', 'cavidad', 2, 14, '2019-09-04 00:40:28', 0, NULL),
+('Tamaño', 'cavidad_tamano', NULL, '4', 'cavidad_tamano', 2, 15, '2019-09-04 00:43:44', 0, NULL);
 
 -- --------------------------------------------------------
 
