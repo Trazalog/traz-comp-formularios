@@ -7,6 +7,8 @@
     <title>FRM | Componentes</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    
+    <link rel="manifest" href="./manifest.json">
     <!-- Bootstrap 3.3.7 -->
     <link rel="stylesheet" href="lib/bower_components/bootstrap/dist/css/bootstrap.min.css">
     <!-- Font Awesome -->
@@ -55,8 +57,9 @@
             <!-- mini logo for sidebar mini 50x50 pixels -->
             <span class="logo-mini"><b>F</b>RM</span>
             <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><b>Comp</b>FRM</span>
+            <span class="logo-lg"><b>Comp</b>FRM <i id="conexion" class="fa fa-circle text-green"></i></span>
         </a>
+        
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top">
             <!-- Sidebar toggle button-->
@@ -72,7 +75,6 @@
 #$this->load->view('layout/perfil');
 
 ?>
-
 
         </nav>
     </header>
@@ -312,8 +314,9 @@ $('.menu .link').on('click', function() {
 
 function linkTo(uri = '') {
     if (link == '' && uri == '') return;
+    link = (uri == '' ? link : uri);
     $('#content').empty();
-    $('#content').load('<?php echo base_url() ?>' + (uri == '' ? link : uri));
+    $('#content').load('<?php echo base_url() ?>' + link);
 }
 
 function collapse(e) {

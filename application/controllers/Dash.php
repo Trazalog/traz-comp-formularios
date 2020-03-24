@@ -11,7 +11,7 @@ class Dash extends CI_Controller {
      
       $data['menu'] = null;//menu(file_get_contents("C:/xampp/htdocs/bpm/menu.json"));
 
-      $data['link'] = def_view;
+      $data['link'] = 'Test';
     
       $this->load->view('layout/Admin',$data);
    }

@@ -37,26 +37,40 @@ $.widget.bridge('uibutton', $.ui.button);
        <!-- iCheck 1.0.1 -->
        <script src="<?php base_url();?>lib/plugins/iCheck/icheck.min.js"></script>
 
-         <script src="<?php  echo base_url();?>lib/bootstrapValidator/bootstrapValidator.min.js"></script>
+       <script src="<?php  echo base_url();?>lib/bootstrapValidator/bootstrapValidator.min.js"></script>
+
+
+
+
+
+        <?php $this->load->view('layout/sw') ?>
+
+
+       <script src="<?php echo base_url() ?>lib/props/gps.js"></script>
+       <script src="<?php echo base_url() ?>lib/props/offline.js"></script>
+
 
        <script>
-jQuery.fn.single_double_click = function(single_click_callback, double_click_callback, timeout) {
-    return this.each(function() {
-        var clicks = 0,
-            self = this;
-        jQuery(this).click(function(event) {
-            clicks++;
-            if (clicks == 1) {
-                setTimeout(function() {
-                    if (clicks == 1) {
-                        single_click_callback.call(self, event);
-                    } else {
-                        double_click_callback.call(self, event);
-                    }
-                    clicks = 0;
-                }, timeout || 300);
-            }
-        });
-    });
+Offline.options = {
+    checks: {
+        xhr: {
+            url: '<?php echo base_url() ?>index.php/Test/conexion'
+        }
+    }
+};
+
+//OFFLINE SETTING
+Offline.on('up', function() {
+    $('#conexion').removeClass('text-danger').addClass('text-green');
+});
+
+Offline.on('down', function() {
+    $('#conexion').removeClass('text-green').addClass('text-danger');
+});
+
+var run = function() {
+    if (Offline.state === 'up')
+        Offline.check();
 }
+setInterval(run, 5000);
        </script>
