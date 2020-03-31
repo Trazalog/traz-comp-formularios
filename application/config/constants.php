@@ -99,5 +99,5 @@ define('files', 'files/');
 define('FRM','traz-comp-form/');
 
 //OFFLINE
-define('SW', './sw-test.js');
+define('SW', FALSE);
 

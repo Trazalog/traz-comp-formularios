@@ -20,9 +20,11 @@ class Forms extends CI_Model
 
         $aux = array();
 
-        foreach ($items as $key => $o) {
+        foreach ($items->items as $key => $o) {
 
             $o->info_id = $newInfo;
+            unset($o->nombre);
+            unset($o->tipo);
 
             if ($o->name) {
                 $o->valor = $data ? $data[$o->name] : null;
@@ -32,15 +34,17 @@ class Forms extends CI_Model
             }
         }
 
-        $this->db->insert_batch('frm_instancias_formularios', $aux);
-        return $this->db->insert_batch('frm_instancias_formularios', $array);
+        if(!$this->db->insert_batch('frm_instancias_formularios', $aux)) return FALSE;
+        if(!$this->db->insert_batch('frm_instancias_formularios', $array)) return FALSE;
+
+        return $newInfo;
     }
 
     public function actualizar($info_id, $data)
     {
 
         foreach ($data as $key => $o) {
-
+            if(!$key) continue;
             $this->db->where('info_id', $info_id);
             $this->db->where('name', $key);
             $this->db->set('valor', $o);
@@ -82,7 +86,7 @@ class Forms extends CI_Model
 
     public function obtenerPlantilla($id)
     {
-        $this->db->select('name, label, requerido, tida_id, valo_id, orden, A.form_id, aux, B.valor as tipo, C.nombre');
+        $this->db->select('name, label, requerido, tida_id, valo_id, orden, A.form_id, B.valor as tipo, C.nombre');
         $this->db->from('frm_items as A');
         $this->db->join('utl_tablas as B', 'B.tabl_id = A.tida_id');
         $this->db->join('frm_formularios as C', 'C.form_id = A.form_id');
@@ -95,7 +99,8 @@ class Forms extends CI_Model
         $newInfo = $this->db->select_max('info_id')->get('frm_instancias_formularios')->row('info_id') + 1;
         
         $aux = new StdClass();
-        $aux->info_id = $newInfo;
+        $aux->info_id = false;
+        $aux->form_id = $id;
         $aux->nombre = $res->row()->nombre;
         $aux->id = $newInfo; 
         $aux->items = $res->result();
@@ -114,41 +119,16 @@ class Forms extends CI_Model
 
     public function obtenerValores($id)
     {
-        $this->db->select('valor as value, descripcion as label');
+        $this->db->select('valor as value, valor as label');
         return $this->db->get_where('utl_tablas', array('tabla' => $id))->result();
     }
 
     public function listado()
     {
-        $this->db->select('nombre, A.form_id, info_id');
+        $this->db->select('nombre, A.form_id, info_id, A.fec_alta as fecha');
         $this->db->from('frm_instancias_formularios as A');
         $this->db->join('frm_formularios as B', 'B.form_id = A.form_id');
-        $this->db->group_by('A.form_id');
+        $this->db->group_by('A.info_id');
         return $this->db->get()->result();
-    }
-
-    public function crear($nombre)
-    {
-        $data['nombre'] = $nombre; 
-        $this->db->insert('frm_formularios', $data);
-        return $this->db->insert_id();
-    }
-
-    public function agregarItem($data)
-    {
-        $this->db->select_max('orden');
-        $this->db->where('form_id', $data['form_id']);
-        $orden = $this->db->get('frm_items')->row('orden') + 1;
-        $tida = $this->db->get_where('utl_tablas', ['valor' => $data['item']])->row('tabl_id');
-        $data = array(
-            'label' => $data['label'],
-            'name' => $data['name'],
-            'requerido' => isset($data['requerido']),
-            'tida_id' => $tida,
-            'valo_id' => isset($data['opciones'])?$data['opciones']:null,
-            'form_id' => $data['form_id'],
-            'orden' => $orden
-        );
-        return $this->db->insert('frm_items', $data);
     }
 }

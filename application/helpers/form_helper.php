@@ -3,7 +3,11 @@
 if (!function_exists('form')) {
     function form($data, $modal = false)
     {
-        $html = "<form id='frm-" . (isset($data->id) ? $data->id : null) . "' data-info='" . (isset($data->info_id) ? $data->info_id : null) . "'>";
+        $html = "<form id='frm-$data->id' data-form='" . (isset($data->form_id) ? $data->form_id : 'frm-default') . "' data-info='" . (isset($data->info_id) ? $data->info_id : null) . "' data-valido='false'>";
+        $html .= "<fieldset>";
+        if (!$data->items) {
+            return 'Formulario No encontrado.';
+        }
 
         foreach ($data->items as $key => $e) {
 
@@ -12,11 +16,9 @@ if (!function_exists('form')) {
                 case 'titulo1':
                     $html .= "<h1>$e->label</h1>";
                     break;
-
                 case 'titulo2':
                     $html .= "<h2>$e->label</h2>";
                     break;
-
                 case 'titulo3':
                     $html .= "<h3>$e->label</h3>";
                     break;
@@ -59,7 +61,7 @@ if (!function_exists('form')) {
             }
         }
 
-        return $html . '<button class="btn btn-primary pull-right frm-save ' . ($modal ? 'hidden' : null) . '" onclick="frmGuardar(this)">Guardar</button></form>';
+        return $html . '<button type="button" class="btn btn-primary pull-right frm-save ' . ($modal ? 'hidden' : null) . '" onclick="frmGuardar(this)">Guardar</button></form></fieldset>';
     }
 
     function input($e)
@@ -73,7 +75,7 @@ if (!function_exists('form')) {
 
     function select($e)
     {
-        $val = '<option value=""> - Seleccionar - </option>';
+        $val = '<option value=""> -Seleccionar- </option>';
         foreach ($e->values as $o) {
             $val .= "<option value='$o->value' " . ((isset($e->valor) && $e->valor == $o->value) ? 'selected' : null) . ">$o->label</option>";
         }
@@ -153,7 +155,7 @@ if (!function_exists('form')) {
     {
         return
             "<div class='form-group'>
-            <label>$e->label:</label>
+            <label>$e->label</label>
             <textarea class='form-control' rows='3' placeholder='Ingrese Texto...' id='$e->name' type='file' name='$e->name' " . ($e->requerido ? req() : null)
             . ">" . (isset($e->valor) ? $e->valor : null) . "</textarea>
         </div>";

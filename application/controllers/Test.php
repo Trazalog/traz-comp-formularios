@@ -5,32 +5,14 @@ class Test extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model(FRM.'Forms');
+        $this->load->model('Forms');
     }
 
     public function index()
     {
-        $this->load->view('test1');
-    }
-
-    public function index1()
-    {
-        $data['frm'] = $this->Forms->html(3);
+        $data['frm'] = form($this->Forms->obtenerPlantilla(1)) ;
         $this->load->view('test', $data);
         $this->load->view(FRM.'scripts');
-    }
-
-    public function A()
-    {
-        echo 'A';
-    }
-    public function B()
-    {
-        echo 'B';
-    }
-    public function C()
-    {
-        echo 'C';
     }
 
     public function conexion()

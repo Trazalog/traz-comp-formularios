@@ -17,7 +17,7 @@ if(SW) { ?>
         console.log('Service Worker is not supported in this browser.');
     }
 
-<?php } ?>
+
 
 
 //Precacheo
@@ -41,5 +41,5 @@ var catch_url = [
 
  caches.open('tcf-cache').then(function(cache) {
      return cache.addAll(catch_url);
- });
+ });<?php } ?>
 </script>
