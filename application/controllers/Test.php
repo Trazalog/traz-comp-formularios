@@ -10,13 +10,7 @@ class Test extends CI_Controller
 
     public function index()
     {
-        $data['frm'] = form($this->Forms->obtenerPlantilla(1)) ;
-        $this->load->view('test', $data);
-        $this->load->view(FRM.'scripts');
-    }
-
-    public function conexion()
-    {
-        return true;
+        $this->Forms->instanciarVariables(1,2);
+        echo 'Hecho';
     }
 }

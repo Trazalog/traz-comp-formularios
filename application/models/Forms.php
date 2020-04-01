@@ -37,6 +37,8 @@ class Forms extends CI_Model
         if(!$this->db->insert_batch('frm_instancias_formularios', $aux)) return FALSE;
         if(!$this->db->insert_batch('frm_instancias_formularios', $array)) return FALSE;
 
+        $this->instanciarVariables($form_id, $newInfo);
+
         return $newInfo;
     }
 
@@ -130,5 +132,20 @@ class Forms extends CI_Model
         $this->db->join('frm_formularios as B', 'B.form_id = A.form_id');
         $this->db->group_by('A.info_id');
         return $this->db->get()->result();
+    }
+
+    public function instanciarVariables($form_id, $info_id)
+    {
+        $this->db->select("name, variable, $info_id as info_id");
+        $this->db->where('name is not null');
+        $this->db->where('form_id', $form_id);
+        $res = $this->db->get('frm_items')->result();
+        
+        foreach ($res as $o) {
+            $this->db->where('info_id', $o->info_id);
+            $this->db->where('name', $o->name);
+            $this->db->set('variable', $o->variable);
+            $this->db->update('frm_instancias_formularios');
+        }
     }
 }
