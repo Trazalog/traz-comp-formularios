@@ -32,9 +32,13 @@ class Form extends CI_Controller
     public function obtenerNuevo($form, $modal = false)
     {
 
-        $html = form($this->Forms->obtenerPlantilla($form), $modal);
+        $data['html'] = form($this->Forms->obtenerPlantilla($form), $modal);
 
-        echo $html;
+        if($modal){
+            echo json_encode($data);
+        }else{
+            echo $data['html'];
+        }
     }
 
     public function obtenerTodos()

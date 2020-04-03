@@ -1,5 +1,6 @@
 <div class="box">
     <div class="box-body">
+        <button class="btn btn-primary frm-new-modal" data-form="1">Nuevo Form</button><br>
         <table class="table-striped table-hover table">
             <tbody>
                 <?php 
@@ -13,6 +14,12 @@
                 ?>
             </tbody>
         </table>
+    </div>
+</div>
+
+<div class="box">
+    <div class="box-body frm-new" data-form="1">
+
     </div>
 </div>
 

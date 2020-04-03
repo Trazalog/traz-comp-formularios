@@ -11,7 +11,7 @@ if (!function_exists('form')) {
 
         foreach ($data->items as $key => $e) {
 
-            switch ($e->tipo) {
+            switch ($e->tipo_dato) {
 
                 case 'titulo1':
                     $html .= "<h1>$e->label</h1>";
@@ -159,6 +159,12 @@ if (!function_exists('form')) {
             <textarea class='form-control' rows='3' placeholder='Ingrese Texto...' id='$e->name' type='file' name='$e->name' " . ($e->requerido ? req() : null)
             . ">" . (isset($e->valor) ? $e->valor : null) . "</textarea>
         </div>";
+    }
+
+    function req(){
+        return  
+        ' data-bv-notempty
+          data-bv-notempty-message="Campo Obligatorio *" ';
     }
 
 }
