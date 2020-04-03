@@ -1,6 +1,9 @@
 <div class="box">
+    <div class="box-header">
+        <h3 class="box-title">Lista Formularios</h3>
+    </div>
     <div class="box-body">
-        <button class="btn btn-primary frm-new-modal" data-form="1">Nuevo Form</button><br>
+        <!-- <button class="btn btn-primary frm-new-modal" data-form="1">Nuevo Form</button><br> -->
         <table class="table-striped table-hover table">
             <tbody>
                 <?php 
@@ -18,6 +21,9 @@
 </div>
 
 <div class="box">
+    <div class="box-header">
+        <h3 class="box-title">Nuevo Formulario</h3>
+    </div>
     <div class="box-body frm-new" data-form="1">
 
     </div>
