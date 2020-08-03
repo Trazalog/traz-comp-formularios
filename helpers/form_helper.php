@@ -167,4 +167,9 @@ if (!function_exists('form')) {
           data-bv-notempty-message="Campo Obligatorio *" ';
     }
 
+    function hreq()
+    {
+        echo '<strong class="text-danger">*</strong>';
+    }
+
 }
