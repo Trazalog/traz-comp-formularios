@@ -68,15 +68,15 @@ class Form extends CI_Controller
 
         if ($new) {
 
-            $res = $this->Forms->guardar($info_id, $data);
+            $res['info_id'] = $this->Forms->guardar($info_id, $data);
             
         } else {
             
-            $res = $this->Forms->actualizar($info_id, $data);
+            $res['info_id'] = $this->Forms->actualizar($info_id, $data);
 
         }
 
-        echo json_encode(true);
+        echo json_encode($res);
     }
 
     public function guardarJson($info_id = false)
