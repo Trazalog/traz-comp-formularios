@@ -146,4 +146,10 @@ class Forms extends CI_Model
             $this->db->update('frm.instancias_formularios');
         }
     }
+
+    public function generarInstancia($form_id)
+    {
+        $res['info_id'] = $this->guardar($form_id);
+        return $res;
+    }
 }
