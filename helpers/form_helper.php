@@ -173,7 +173,7 @@ if (!function_exists('form')) {
     }
 
     function nuevoForm($form_id)
-    {
+    {   
         $ci = &get_instance();
         $ci->load->model(FRM.'Forms');
         $res = $ci->Forms->generarInstancia($form_id);
