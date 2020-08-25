@@ -173,21 +173,25 @@ if (!function_exists('form')) {
     }
 
     function nuevoForm($form_id)
-    {   
-        $ci = &get_instance();
-        $ci->load->model(FRM.'Forms');
-        $res = $ci->Forms->generarInstancia($form_id);
-        $res = getForm($res['info_id']);
-        return $res;
+    {  
+        if($form_id){
+            $ci = &get_instance();
+            $ci->load->model(FRM.'Forms');
+            $res = $ci->Forms->generarInstancia($form_id);
+            $res = getForm($res['info_id']);
+            return $res;
+        }
     }
 
    function getForm($info_id)
     {
-        $ci = &get_instance();
-        $ci->load->model(FRM.'Forms');
-        $res = $ci->Forms->obtener($info_id);
-        $res = form($res);
-        return $res;
+        if($info_id){
+            $ci = &get_instance();
+            $ci->load->model(FRM.'Forms');
+            $res = $ci->Forms->obtener($info_id);
+            $res = form($res);
+            return $res;
+        }
     }
 
 }
