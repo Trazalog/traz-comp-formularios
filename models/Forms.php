@@ -152,4 +152,9 @@ class Forms extends CI_Model
         $res['info_id'] = $this->guardar($form_id);
         return $res;
     }
+
+    public function validarVariable($info_id)
+    {
+        # code...
+    }
 }
