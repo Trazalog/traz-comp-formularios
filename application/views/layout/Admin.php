@@ -302,10 +302,14 @@
         <!-- Add the sidebar's background. This div must be placed
        immediately after the control sidebar -->
         <div class="control-sidebar-bg"></div>
+
+        <?php $this->load->view('traz-comp-form/wait') ?>
+    
     </div>
     <!-- ./wrapper -->
 
     <?php $this->load->view('layout/general_scripts') ?>
+ 
     <script>
     var link = '';
 

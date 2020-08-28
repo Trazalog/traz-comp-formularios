@@ -3,7 +3,7 @@
 if (!function_exists('form')) {
     function form($data, $modal = false)
     {
-        $html = "<form id='frm-$data->id' data-form='" . (isset($data->form_id) ? $data->form_id : 'frm-default') . "' data-info='" . (isset($data->info_id) ? $data->info_id : null) . "' data-valido='false'>";
+        $html = "<form class='frm' id='frm-$data->id' data-form='" . (isset($data->form_id) ? $data->form_id : 'frm-default') . "' data-info='" . (isset($data->info_id) ? $data->info_id : null) . "' data-valido='false'>";
         $html .= "<fieldset>";
         if (!$data->items) {
             return 'Formulario No encontrado.';
@@ -11,7 +11,7 @@ if (!function_exists('form')) {
 
         foreach ($data->items as $key => $e) {
 
-            switch ($e->tipo) {
+            switch ($e->tipo_dato) {
 
                 case 'titulo1':
                     $html .= "<h1>$e->label</h1>";
@@ -159,6 +159,39 @@ if (!function_exists('form')) {
             <textarea class='form-control' rows='3' placeholder='Ingrese Texto...' id='$e->name' type='file' name='$e->name' " . ($e->requerido ? req() : null)
             . ">" . (isset($e->valor) ? $e->valor : null) . "</textarea>
         </div>";
+    }
+
+    function req(){
+        return  
+        ' data-bv-notempty
+          data-bv-notempty-message="Campo Obligatorio *" ';
+    }
+
+    function hreq()
+    {
+        echo '<strong class="text-danger">*</strong>';
+    }
+
+    function nuevoForm($form_id)
+    {  
+        if($form_id){
+            $ci = &get_instance();
+            $ci->load->model(FRM.'Forms');
+            $res = $ci->Forms->generarInstancia($form_id);
+            $res = getForm($res['info_id']);
+            return $res;
+        }
+    }
+
+   function getForm($info_id)
+    {
+        if($info_id){
+            $ci = &get_instance();
+            $ci->load->model(FRM.'Forms');
+            $res = $ci->Forms->obtener($info_id);
+            $res = form($res);
+            return $res;
+        }
     }
 
 }
