@@ -32,9 +32,13 @@ class Form extends CI_Controller
     public function obtenerNuevo($form, $modal = false)
     {
 
-        $html = form($this->Forms->obtenerPlantilla($form), $modal);
+        $data['html'] = form($this->Forms->obtenerPlantilla($form), $modal);
 
-        echo $html;
+        if($modal){
+            echo json_encode($data);
+        }else{
+            echo $data['html'];
+        }
     }
 
     public function obtenerTodos()
@@ -64,15 +68,15 @@ class Form extends CI_Controller
 
         if ($new) {
 
-            $res = $this->Forms->guardar($info_id, $data);
+            $res['info_id'] = $this->Forms->guardar($info_id, $data);
             
         } else {
             
-            $res = $this->Forms->actualizar($info_id, $data);
+            $res['info_id'] = $this->Forms->actualizar($info_id, $data);
 
         }
 
-        echo json_encode(true);
+        echo json_encode($res);
     }
 
     public function guardarJson($info_id = false)
