@@ -194,3 +194,10 @@ function getForm($info_id)
         return $res;
     }
 }
+
+function getFormXEmpresa($nombre, $emprId){
+        $ci = &get_instance();
+        $ci->load->model(FRM . 'Forms');
+        $res = $ci->Forms->obtenerXEmpresa($nombre, $emprId);
+        return form($res);
+}
