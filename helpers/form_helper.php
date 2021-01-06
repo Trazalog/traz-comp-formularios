@@ -3,7 +3,7 @@
 if (!function_exists('form')) {
     function form($data, $modal = false)
     {
-        $html = "<form class='frm' id='frm-$data->id' data-form='" . (isset($data->form_id) ? $data->form_id : 'frm-default') . "' data-info='" . (isset($data->info_id) ? $data->info_id : null) . "' data-valido='false'>";
+        $html = "<form class='frm' id='frm-$data->id' data-ninfoid='$data->id' data-form='" . (isset($data->form_id) ? $data->form_id : 'frm-default') . "' data-info='" . (isset($data->info_id) ? $data->info_id : null) . "' data-valido='false'>";
         $html .= "<fieldset>";
         if (!$data->items) {
             return 'Formulario No encontrado.';
@@ -193,4 +193,11 @@ function getForm($info_id)
         $res = form($res);
         return $res;
     }
+}
+
+function getFormXEmpresa($nombre, $emprId){
+        $ci = &get_instance();
+        $ci->load->model(FRM . 'Forms');
+        $res = $ci->Forms->obtenerXEmpresa($nombre, $emprId);
+        return form($res);
 }

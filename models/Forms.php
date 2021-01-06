@@ -157,4 +157,14 @@ class Forms extends CI_Model
     {
         # code...
     }
+
+    public function obtenerXEmpresa($nombre, $emprId)
+    {
+        $this->db->where('empr_id', $emprId);
+        $this->db->where('nombre', $nombre);
+        $res = $this->db->get('frm.formularios')->first_row();
+        if($res){ 
+            return $this->obtenerPlantilla($res->form_id);
+        }
+    }
 }
