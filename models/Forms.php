@@ -27,15 +27,15 @@ class Forms extends CI_Model
             unset($o->tipo);
 
             if ($o->name) {
-                $o->valor = $data ? $data[$o->name] : null;
+                $o->valor = ($data ? $data[$o->name] : null);
                 array_push($array, $o);
             } else {
                 array_push($aux, $o);
             }
         }
 
-        if(!$this->db->insert_batch('frm.instancias_formularios', $aux)) return FALSE;
-        if(!$this->db->insert_batch('frm.instancias_formularios', $array)) return FALSE;
+        if($aux && !$this->db->insert_batch('frm.instancias_formularios', $aux)) return FALSE;
+        if($array && !$this->db->insert_batch('frm.instancias_formularios', $array)) return FALSE;
 
         $this->instanciarVariables($form_id, $newInfo);
 
