@@ -3,7 +3,7 @@
 if (!function_exists('form')) {
     function form($data, $modal = false)
     {
-        $html = "<form class='frm' id='frm-$data->id' data-form='" . (isset($data->form_id) ? $data->form_id : 'frm-default') . "' data-info='" . (isset($data->info_id) ? $data->info_id : null) . "' data-valido='false'>";
+        $html = "<form class='frm' id='frm-$data->id' data-ninfoid='$data->id' data-form='" . (isset($data->form_id) ? $data->form_id : 'frm-default') . "' data-info='" . (isset($data->info_id) ? $data->info_id : null) . "' data-valido='false'>";
         $html .= "<fieldset>";
         if (!$data->items) {
             return 'Formulario No encontrado.';
@@ -54,6 +54,10 @@ if (!function_exists('form')) {
                 case 'textarea':
                     $html .= textarea($e);
                     break;
+                
+                case 'image':
+                    $html .= image($e);
+                    break;
 
                 default:
                     $html .= "<hr>";
@@ -63,135 +67,185 @@ if (!function_exists('form')) {
 
         return $html . '<button type="button" class="btn btn-primary pull-right frm-save ' . ($modal ? 'hidden' : null) . '" onclick="frmGuardar(this)">Guardar</button></form></fieldset>';
     }
-
-    function input($e)
-    {
-        return
-            "<div class='form-group'>
+}
+function input($e)
+{
+    return
+        "<div class='form-group'>
                 <label for=''>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
                 <input class='form-control' value='" . (isset($e->valor) ? $e->valor : null) . "' type='text' placeholder='Escriba su Texto...' id='$e->name'  name='$e->name' " . ($e->requerido ? req() : null) . "/>
             </div>";
+}
+
+function select($e)
+{
+    $val = '<option value=""> -Seleccionar- </option>';
+    foreach ($e->values as $o) {
+        $val .= "<option value='$o->value' " . ((isset($e->valor) && $e->valor == $o->value) ? 'selected' : null) . ">$o->label</option>";
     }
 
-    function select($e)
-    {
-        $val = '<option value=""> -Seleccionar- </option>';
-        foreach ($e->values as $o) {
-            $val .= "<option value='$o->value' " . ((isset($e->valor) && $e->valor == $o->value) ? 'selected' : null) . ">$o->label</option>";
-        }
-
-        return
-            "<div class='form-group'>
+    return
+        "<div class='form-group'>
             <label for=''>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
             <select class='form-control frm-select' name='$e->name'>$val</select>
         </div>";
-    }
+}
 
-    function datepicker($e)
-    {
-        return
-            "<div class='form-group'>
+function datepicker($e)
+{
+    return
+        "<div class='form-group'>
                 <label for=''>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
                 <input class='form-control datepicker' value='" . (isset($e->valor) ? $e->valor : null) . "' type='text' placeholder='dd/mm/aaaa' id='$e->name'  name='$e->name' " . ($e->requerido ? req() : null) . " data-bv-date-format='DD/MM/YYYY' data-bv-date-message='Formato de Fecha Inválido'/>
             </div>";
 
-    }
+}
 
-    function check($e)
-    {
-        $html = "";
-        foreach ($e->values as $key => $o) {
-            $html .= "<div class='checkbox'>
+function check($e)
+{
+    $html = "";
+    foreach ($e->values as $key => $o) {
+        $html .= "<div class='checkbox'>
                                 <label>
                                     <input type='checkbox' name='$e->name[]' class='flat-red i-check' value='$o->value' " . ($key == 0 && $e->requerido ? null : null) . ((isset($e->valor) && strpos("_" . $e->valor, $o->value) > 0 ? ' checked' : null)) . ">
                                     $o->label
                                 </label>
                             </div>";
-        }
-        // $html .= "<input class='hidden' type='checkbox' name='$e->name[]' value=' ' checked>";
-        return
-            "<div class='form-group'><label>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label><div style='margin-left: 10%;'> $html</div></div>";
-
     }
+    // $html .= "<input class='hidden' type='checkbox' name='$e->name[]' value=' ' checked>";
+    return
+        "<div class='form-group'><label>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label><div style='margin-left: 10%;'> $html</div></div>";
 
-    function radio($e)
-    {
-        $html = '';
-        foreach ($e->values as $key => $o) {
-            $html .= "<div class='radio'>
+}
+
+function radio($e)
+{
+    $html = '';
+    foreach ($e->values as $key => $o) {
+        $html .= "<div class='radio'>
                         <label>
                             <input type='radio' name='$e->name' class='flat-red i-check' value='$o->value' " . ($key == 0 && $e->requerido ? null : null) . " " . ((isset($e->valor) && $e->valor == $o->value) ? 'checked' : null) . ">
                             $o->label
                         </label>
                     </div>";
-        }
-        return
-            "<div class='form-group'><label>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label><div style='margin-left: 10%;'> $html</div></div>";
+    }
+    return
+        "<div class='form-group'><label>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label><div style='margin-left: 10%;'> $html</div></div>";
+}
+
+function archivo($e)
+{
+
+    $file = null;
+
+    if (isset($e->valor)) {
+        // $url = base_url(files . $e->valor);
+        $ext = obtenerExtension($e->valor);
+        $rec = stream_get_contents($e->valor4_base64);
+        $url = $ext.$rec;
+        $file = " download='$e->valor' href='$url' ";
+    } else {
+        $file = "style='display: none;'";
     }
 
-    function archivo($e)
-    {
-
-        $file = null;
-
-        if (isset($e->valor)) {
-            $url = base_url(files . $e->valor);
-            $file = " download='$e->valor' href='$url' ";
-        } else {
-            $file = "style='display: none;'";
-        }
-
-        return
-            "<div class='form-group'>
+    return
+        "<div class='form-group'>
                   <label>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
                   <input id='$e->name' type='file' name='-file-$e->name' " . ($e->requerido ? req() : null)
-            . ">
+        . ">
                   <p class='help-block show-file'><a $file class='help-button col-sm-4 download' title='Descargar' download><i
                     class='fa fa-download'></i> Ver Adjunto</a></p>
              </div><br>";
-    }
+}
 
-    function textarea($e)
-    {
-        return
-            "<div class='form-group'>
+function textarea($e)
+{
+    return
+        "<div class='form-group'>
             <label>$e->label</label>
             <textarea class='form-control' rows='3' placeholder='Ingrese Texto...' id='$e->name' type='file' name='$e->name' " . ($e->requerido ? req() : null)
-            . ">" . (isset($e->valor) ? $e->valor : null) . "</textarea>
+        . ">" . (isset($e->valor) ? $e->valor : null) . "</textarea>
         </div>";
-    }
+}
 
-    function req(){
-        return  
+function req()
+{
+    return
         ' data-bv-notempty
           data-bv-notempty-message="Campo Obligatorio *" ';
-    }
+}
 
-    function hreq()
-    {
-        echo '<strong class="text-danger">*</strong>';
-    }
+function hreq()
+{
+    echo '<strong class="text-danger">*</strong>';
+}
 
-    function nuevoForm($form_id)
-    {  
-        if($form_id){
-            $ci = &get_instance();
-            $ci->load->model(FRM.'Forms');
-            $res = $ci->Forms->generarInstancia($form_id);
-            $res = getForm($res['info_id']);
-            return $res;
+function image($e){
+    $style = '';
+    if(isset($e->valor4_base64)){
+    
+        $rec = stream_get_contents($e->valor4_base64);
+        $ext = obtenerExtension($e->valor);
+    }else{
+        $style = "display:none";
+    }
+    
+    return
+    "<div class='col-4'>
+        <div class='form-group'>
+            <label for=''>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
+            <input class='form-control' value='" . (isset($e->valor) ? $e->valor : null) . "' type='file' id='$e->name'  name='-file-$e->name' " . ($e->requerido ? req() : null) . " onchange='previewFile(this)' accept='image/*' capture/>
+            <image id='vistaPrevia_$e->name' src='" . (isset($e->valor4_base64) ? $ext.$rec : "") . "' height='200' alt='Image preview...' style='$style'>
+        </div>
+    </div>";
+}
+
+function nuevoForm($form_id)
+{
+    if ($form_id) {
+        $ci = &get_instance();
+        $ci->load->model(FRM . 'Forms');
+        $res = $ci->Forms->generarInstancia($form_id);
+        $res = getForm($res['info_id']);
+        return $res;
+    }
+}
+
+function getForm($info_id)
+{
+    if ($info_id) {
+        $ci = &get_instance();
+        $ci->load->model(FRM . 'Forms');
+        $res = $ci->Forms->obtener($info_id);
+        $res = form($res);
+        return $res;
+    }
+}
+
+function getFormXEmpresa($nombre, $emprId){
+        $ci = &get_instance();
+        $ci->load->model(FRM . 'Forms');
+        $res = $ci->Forms->obtenerXEmpresa($nombre, $emprId);
+        return form($res);
+}
+
+//Funcion para obtener la extension del archivo codificado
+function obtenerExtension($archivo){
+    $ext = explode('.',$archivo);
+        switch(strtolower($ext[1])){
+            case 'jpg': $ext = 'data:image/jpg;base64,';break;
+            case 'png': $ext = 'data:image/png;base64,';break;
+            case 'jpeg': $ext = 'data:image/jpeg;base64,';break;
+            case 'pjpeg': $ext = 'data:image/pjpeg;base64,';break;
+            case 'wbmp': $ext = 'data:image/vnd.wap.wbmp;base64,';break;
+            case 'webp': $ext = 'data:image/webp;base64,';break;
+            case 'pdf': $ext = 'data:application/pdf;base64,';break;
+            case 'doc': $ext = 'data:application/msword;base64,';break;
+            case 'xls': $ext = 'data:application/vnd.ms-excel;base64,';break;
+            case 'docx': $ext = 'data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,';break;
+            case 'txt': $ext = 'data:text/plain;base64,';break;
+            case 'csv': $ext = 'data:text/csv;base64,';break;
+            default: $ext = "";
         }
-    }
-
-   function getForm($info_id)
-    {
-        if($info_id){
-            $ci = &get_instance();
-            $ci->load->model(FRM.'Forms');
-            $res = $ci->Forms->obtener($info_id);
-            $res = form($res);
-            return $res;
-        }
-    }
-
+    return $ext;
 }
