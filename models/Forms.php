@@ -13,7 +13,7 @@ class Forms extends CI_Model
     public function guardar($form_id, $data = false)
     {
         $items = $this->obtenerPlantilla($form_id);
-
+        
         $newInfo = $this->db->select_max('info_id')->get('frm.instancias_formularios')->row('info_id') + 1;
 
         $array = array();
@@ -31,6 +31,26 @@ class Forms extends CI_Model
                 array_push($array, $o);
             } else {
                 array_push($aux, $o);
+            }
+
+            if($o->tipo_dato == 'image' || $o->tipo_dato == 'file'){
+                $nom = "-file-".$o->name;
+                // log_message("ERROR","INGRESO AL IF DE ITEMS FILE ESTA VACIO??".json_encode($_FILES[$nom]));
+                if ($o->name) {
+                    if(!empty($_FILES[$nom]['tmp_name'])){
+                        $array[$key]->valor4_base64 = base64_encode(file_get_contents($_FILES[$nom]['tmp_name']));
+                    }else{
+                        $array[$key]->valor4_base64 = NULL;
+                    }
+                }else{
+                    if(!empty($_FILES[$nom]['tmp_name'])){
+                        $aux[$key]->valor4_base64 = base64_encode(file_get_contents($_FILES[$nom]['tmp_name']));
+                    }else{
+                        $array[$key]->valor4_base64 = NULL;
+                    }
+                }
+            }else{
+                $array[$key]->valor4_base64 = NULL;
             }
         }
 
@@ -58,7 +78,7 @@ class Forms extends CI_Model
 
     public function obtener($info_id)
     {
-        $this->db->select('name, label,valor, requerido, valo_id, orden, A.form_id, tipo_dato, C.nombre');
+        $this->db->select('name, label,valor, requerido, valo_id, orden, A.form_id, tipo_dato, C.nombre, A.valor4_base64');
         $this->db->from('frm.instancias_formularios as A');
         $this->db->join('frm.formularios as C', 'C.form_id = A.form_id');
         $this->db->where('A.info_id', $info_id);

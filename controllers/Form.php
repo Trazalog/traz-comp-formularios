@@ -56,7 +56,9 @@ class Form extends CI_Controller
 
             if ($rsp > 0) {
                 $nom = str_replace("-file-", "", $key);
-                $data[$nom] = $this->uploadFile($key);
+                //Los files se codifican en base64 y se guarda en la tabla directamente en la columna valor4_base64
+                // $data[$nom] = $this->uploadFile($key); 
+                $data[$nom] = $_FILES[$key]['name'];
                 unset($data[$key]);
             }
 

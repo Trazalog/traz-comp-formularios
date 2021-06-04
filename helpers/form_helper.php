@@ -54,6 +54,10 @@ if (!function_exists('form')) {
                 case 'textarea':
                     $html .= textarea($e);
                     break;
+                
+                case 'image':
+                    $html .= image($e);
+                    break;
 
                 default:
                     $html .= "<hr>";
@@ -135,7 +139,10 @@ function archivo($e)
     $file = null;
 
     if (isset($e->valor)) {
-        $url = base_url(files . $e->valor);
+        // $url = base_url(files . $e->valor);
+        $ext = obtenerExtension($e->valor);
+        $rec = stream_get_contents($e->valor4_base64);
+        $url = $ext.$rec;
         $file = " download='$e->valor' href='$url' ";
     } else {
         $file = "style='display: none;'";
@@ -173,6 +180,26 @@ function hreq()
     echo '<strong class="text-danger">*</strong>';
 }
 
+function image($e){
+    $style = '';
+    if(isset($e->valor4_base64)){
+    
+        $rec = stream_get_contents($e->valor4_base64);
+        $ext = obtenerExtension($e->valor);
+    }else{
+        $style = "display:none";
+    }
+    
+    return
+    "<div class='col-4'>
+        <div class='form-group'>
+            <label for=''>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
+            <input class='form-control' value='" . (isset($e->valor) ? $e->valor : null) . "' type='file' id='$e->name'  name='-file-$e->name' " . ($e->requerido ? req() : null) . " onchange='previewFile(this)' accept='image/*' capture/>
+            <image id='vistaPrevia_$e->name' src='" . (isset($e->valor4_base64) ? $ext.$rec : "") . "' height='200' alt='Image preview...' style='$style'>
+        </div>
+    </div>";
+}
+
 function nuevoForm($form_id)
 {
     if ($form_id) {
@@ -200,4 +227,25 @@ function getFormXEmpresa($nombre, $emprId){
         $ci->load->model(FRM . 'Forms');
         $res = $ci->Forms->obtenerXEmpresa($nombre, $emprId);
         return form($res);
+}
+
+//Funcion para obtener la extension del archivo codificado
+function obtenerExtension($archivo){
+    $ext = explode('.',$archivo);
+        switch(strtolower($ext[1])){
+            case 'jpg': $ext = 'data:image/jpg;base64,';break;
+            case 'png': $ext = 'data:image/png;base64,';break;
+            case 'jpeg': $ext = 'data:image/jpeg;base64,';break;
+            case 'pjpeg': $ext = 'data:image/pjpeg;base64,';break;
+            case 'wbmp': $ext = 'data:image/vnd.wap.wbmp;base64,';break;
+            case 'webp': $ext = 'data:image/webp;base64,';break;
+            case 'pdf': $ext = 'data:application/pdf;base64,';break;
+            case 'doc': $ext = 'data:application/msword;base64,';break;
+            case 'xls': $ext = 'data:application/vnd.ms-excel;base64,';break;
+            case 'docx': $ext = 'data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,';break;
+            case 'txt': $ext = 'data:text/plain;base64,';break;
+            case 'csv': $ext = 'data:text/csv;base64,';break;
+            default: $ext = "";
+        }
+    return $ext;
 }
