@@ -25,7 +25,7 @@ class Forms extends CI_Model
             $o->info_id = $newInfo;
             unset($o->nombre);
             unset($o->tipo);
-
+            
             if ($o->name) {
                 $o->valor = ($data ? $data[$o->name] : null);
                 array_push($array, $o);
@@ -35,7 +35,7 @@ class Forms extends CI_Model
 
             if($o->tipo_dato == 'image' || $o->tipo_dato == 'file'){
                 $nom = "-file-".$o->name;
-                // log_message("ERROR","INGRESO AL IF DE ITEMS FILE ESTA VACIO??".json_encode($_FILES[$nom]));
+                
                 if ($o->name) {
                     if(!empty($_FILES[$nom]['tmp_name'])){
                         $array[$key]->valor4_base64 = base64_encode(file_get_contents($_FILES[$nom]['tmp_name']));
@@ -78,7 +78,7 @@ class Forms extends CI_Model
 
     public function obtener($info_id)
     {
-        $this->db->select('name, label,valor, requerido, valo_id, orden, A.form_id, tipo_dato, C.nombre, A.valor4_base64');
+        $this->db->select('name, label,valor, requerido, valo_id, orden, A.form_id, tipo_dato, C.nombre, A.valor4_base64, A.columna');
         $this->db->from('frm.instancias_formularios as A');
         $this->db->join('frm.formularios as C', 'C.form_id = A.form_id');
         $this->db->where('A.info_id', $info_id);
@@ -107,7 +107,7 @@ class Forms extends CI_Model
 
     public function obtenerPlantilla($id)
     {
-        $this->db->select('name, label, requerido, valo_id, orden, A.form_id, tipo_dato, C.nombre');
+        $this->db->select('name, label, requerido, valo_id, orden, A.form_id, tipo_dato, C.nombre, A.columna');
         $this->db->from('frm.items as A');
         $this->db->join('frm.formularios as C', 'C.form_id = A.form_id');
         $this->db->where('A.form_id', $id);
