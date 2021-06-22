@@ -74,7 +74,7 @@ function input($e)
         "<div class='".($e->columna ? $e->columna : 'col-md-12')."'>
             <div class='form-group'>
                 <label for=''>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
-                <input class='form-control' value='" . (isset($e->valor) ? $e->valor : null) . "' type='text' placeholder='Escriba su $e->label...' id='$e->name'  name='$e->name' " . ($e->requerido ? req() : null) . "/>
+                <input class='form-control' value='" . (isset($e->valor) ? $e->valor : null) . "' type='text' placeholder='Ingrese $e->label...' id='$e->name'  name='$e->name' " . ($e->requerido ? req() : null) . "/>
             </div>
         </div>";
 }
