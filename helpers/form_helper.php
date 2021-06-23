@@ -14,13 +14,13 @@ if (!function_exists('form')) {
             switch ($e->tipo_dato) {
 
                 case 'titulo1':
-                    $html .= "<h1>$e->label</h1>";
+                    $html .= "<div class='".($e->columna ? $e->columna : 'col-md-12')."'><div class=<h1>$e->label</h1></div>";
                     break;
                 case 'titulo2':
-                    $html .= "<h2>$e->label</h2>";
+                    $html .= "<div class='".($e->columna ? $e->columna : 'col-md-12')."'><h2>$e->label</h2></div>";
                     break;
                 case 'titulo3':
-                    $html .= "<h3>$e->label</h3>";
+                    $html .= "<div class='".($e->columna ? $e->columna : 'col-md-12')."'><h3>$e->label</h3></div>";
                     break;
 
                 case 'comentario':
