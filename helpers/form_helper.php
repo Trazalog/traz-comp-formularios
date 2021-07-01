@@ -206,7 +206,7 @@ function image($e){
         $ext = obtenerExtension($e->valor);
         $style = "background-image: url($ext$rec);";
     }else{
-        $style = "background-image: url(lib/imageForms/camera.png);";
+        $style = "background-image: url(lib/imageForms/camera_2.png);";
     }
     
     return
