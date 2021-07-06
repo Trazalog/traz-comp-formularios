@@ -213,13 +213,15 @@ function image($e){
     "<div class='".($e->columna ? $e->columna : 'col-md-12')."'>
         <label for='$e->label'>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
         <div class='form-group imgConte'>
+        <label for='$e->name'>
             <div class='imgEdit'>
                 <input class='form-control' value='" . (isset($e->valor) ? $e->valor : null) . "' type='file' id='$e->name'  name='-file-$e->name' " . ($e->requerido ? req() : null) . " onchange='previewFile(this)' accept='image/*' capture/>
-                <label for='$e->name'></label>
+                
             </div>
         <div class='imgPreview'>
             <div id='vistaPrevia_$e->name' style='$style'></div>
         </div>
+        </label>
     </div>
     </div>";
 }
