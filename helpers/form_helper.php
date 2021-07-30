@@ -59,6 +59,9 @@ if (!function_exists('form')) {
                     $html .= image($e);
                     break;
 
+                case 'number':
+                        $html .= number($e);
+                        break;
                 default:
                     $html .= "<hr>";
                     break;
@@ -90,7 +93,7 @@ function select($e)
         "<div class='".($e->columna ? $e->columna : 'col-md-12')."'>
             <div class='form-group'>
                 <label for=''>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
-                <select class='form-control frm-select' name='$e->name'>$val</select>
+                <select class='form-control frm-select' name='$e->name' ". ($e->requerido ? req() : null).">$val</select>
             </div>
         </div>";
 }
@@ -224,6 +227,16 @@ function image($e){
         </label>
     </div>
     </div>";
+}
+
+function number($e){
+    return
+        "<div class='".($e->columna ? $e->columna : 'col-md-12')."'>
+            <div class='form-group'>
+                <label for=''>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
+                <input class='form-control' value='" . (isset($e->valor) ? $e->valor : null) . "' type='number' placeholder='Ingrese $e->label...' id='$e->name'  name='$e->name' " . ($e->requerido ? req() : null) . "/>
+            </div>
+        </div>";
 }
 
 function nuevoForm($form_id)
