@@ -64,12 +64,15 @@ class Forms extends CI_Model
 
     public function actualizar($info_id, $data)
     {
-
         foreach ($data as $key => $o) {
             if(!$key) continue;
             $this->db->where('info_id', $info_id);
             $this->db->where('name', $key);
             $this->db->set('valor', $o);
+            if(!empty($_FILES["-file-".$key]['tmp_name'])){
+                $valor4_base64 = base64_encode(file_get_contents($_FILES["-file-".$key]['tmp_name']));
+                $this->db->set('valor4_base64',$valor4_base64);
+            }
             $this->db->update('frm.instancias_formularios');
         }
 
