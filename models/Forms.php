@@ -190,4 +190,13 @@ class Forms extends CI_Model
             return $this->obtenerPlantilla($res->form_id);
         }
     }
+
+    function listarFormularios()
+    {
+        log_message('DEBUG', 'Formularios/getFormularios');
+        $resource = '/formularios/'.empresa();
+        $url = REST_FRM . $resource;
+        $array = $this->rest->callApi('GET', $url);
+        return json_decode($array['data']);
+    }
 }
