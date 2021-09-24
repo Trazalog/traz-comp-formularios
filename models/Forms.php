@@ -13,7 +13,7 @@ class Forms extends CI_Model
     public function guardar($form_id, $data = false)
     {
         $items = $this->obtenerPlantilla($form_id);
-
+        
         $newInfo = $this->db->select_max('info_id')->get('frm.instancias_formularios')->row('info_id') + 1;
 
         $array = array();
@@ -25,17 +25,37 @@ class Forms extends CI_Model
             $o->info_id = $newInfo;
             unset($o->nombre);
             unset($o->tipo);
-
+            
             if ($o->name) {
-                $o->valor = $data ? $data[$o->name] : null;
+                $o->valor = ($data ? $data[$o->name] : null);
                 array_push($array, $o);
             } else {
                 array_push($aux, $o);
             }
+
+            if($o->tipo_dato == 'image' || $o->tipo_dato == 'file'){
+                $nom = "-file-".$o->name;
+                
+                if ($o->name) {
+                    if(!empty($_FILES[$nom]['tmp_name'])){
+                        $array[$key]->valor4_base64 = base64_encode(file_get_contents($_FILES[$nom]['tmp_name']));
+                    }else{
+                        $array[$key]->valor4_base64 = NULL;
+                    }
+                }else{
+                    if(!empty($_FILES[$nom]['tmp_name'])){
+                        $aux[$key]->valor4_base64 = base64_encode(file_get_contents($_FILES[$nom]['tmp_name']));
+                    }else{
+                        $array[$key]->valor4_base64 = NULL;
+                    }
+                }
+            }else{
+                $array[$key]->valor4_base64 = NULL;
+            }
         }
 
-        if(!$this->db->insert_batch('frm.instancias_formularios', $aux)) return FALSE;
-        if(!$this->db->insert_batch('frm.instancias_formularios', $array)) return FALSE;
+        if($aux && !$this->db->insert_batch('frm.instancias_formularios', $aux)) return FALSE;
+        if($array && !$this->db->insert_batch('frm.instancias_formularios', $array)) return FALSE;
 
         $this->instanciarVariables($form_id, $newInfo);
 
@@ -44,12 +64,15 @@ class Forms extends CI_Model
 
     public function actualizar($info_id, $data)
     {
-
         foreach ($data as $key => $o) {
             if(!$key) continue;
             $this->db->where('info_id', $info_id);
             $this->db->where('name', $key);
             $this->db->set('valor', $o);
+            if(!empty($_FILES["-file-".$key]['tmp_name'])){
+                $valor4_base64 = base64_encode(file_get_contents($_FILES["-file-".$key]['tmp_name']));
+                $this->db->set('valor4_base64',$valor4_base64);
+            }
             $this->db->update('frm.instancias_formularios');
         }
 
@@ -58,7 +81,7 @@ class Forms extends CI_Model
 
     public function obtener($info_id)
     {
-        $this->db->select('name, label,valor, requerido, valo_id, orden, A.form_id, tipo_dato, C.nombre');
+        $this->db->select('name, label,valor, requerido, valo_id, orden, A.inst_id, A.form_id, tipo_dato, C.nombre, A.valor4_base64, A.columna');
         $this->db->from('frm.instancias_formularios as A');
         $this->db->join('frm.formularios as C', 'C.form_id = A.form_id');
         $this->db->where('A.info_id', $info_id);
@@ -87,7 +110,7 @@ class Forms extends CI_Model
 
     public function obtenerPlantilla($id)
     {
-        $this->db->select('name, label, requerido, valo_id, orden, A.form_id, tipo_dato, C.nombre');
+        $this->db->select('name, label, requerido, valo_id, orden, A.form_id, tipo_dato, C.nombre, A.columna');
         $this->db->from('frm.items as A');
         $this->db->join('frm.formularios as C', 'C.form_id = A.form_id');
         $this->db->where('A.form_id', $id);
@@ -166,5 +189,14 @@ class Forms extends CI_Model
         if($res){ 
             return $this->obtenerPlantilla($res->form_id);
         }
+    }
+
+    function listarFormularios()
+    {
+        log_message('DEBUG', 'Formularios/getFormularios');
+        $resource = '/formularios/'.empresa();
+        $url = REST_FRM . $resource;
+        $array = $this->rest->callApi('GET', $url);
+        return json_decode($array['data']);
     }
 }
