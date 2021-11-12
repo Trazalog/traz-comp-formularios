@@ -1,0 +1,10 @@
+{
+    "menu": [
+        {
+            "titulo": "Mis Tareas",
+            "icono": "fa fa-list",
+            "link": "Tarea",
+            "nivel": 1
+        }
+    ]
+}
