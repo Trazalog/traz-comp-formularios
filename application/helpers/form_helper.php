@@ -219,6 +219,7 @@ function imagePerfil($img64,$imgName){
     return $image;
 }
 
+
 function image($e){
     $style = '';
     if(isset($e->valor4_base64)){
