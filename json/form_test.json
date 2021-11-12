@@ -1,0 +1,97 @@
+{
+    "forms":{
+            "id": "frm-test1",
+            "nombre": "Formulario Test",
+            "plantilla": [
+                {
+                    "tipo": "comentario",
+                    "label": "Complete todos los campos del formulario *"
+                },
+                {
+                    "tipo": "input",
+                    "label": "Nombre",
+                    "requerido": "true",
+                    "name": "nombre"
+                },
+                {
+                    "tipo": "input",
+                    "label": "Apellido",
+                    "requerido": "true",
+                    "name": "apellido"
+                },
+                {
+                    "tipo": "date",
+                    "label": "Fecha Nacimiento",
+                    "requerido": "true",
+                    "name": "fecha_nacimiento"
+                },
+                {
+                    "tipo": "input",
+                    "label": "Email",
+                    "requerido": "true",
+                    "name": "email"
+                },
+                {
+                    "tipo": "select",
+                    "label": "Seleccionar Provincia",
+                    "requerido": "true",
+                    "name": "provincia",
+                    "values": [
+                        {
+                            "value": "sanjuan",
+                            "label": "San Juan"
+                        },
+                        {
+                            "value": "mendoza",
+                            "label": "Mendoza"
+                        },
+                        {
+                            "value": "sanluis",
+                            "label": "San Luis"
+                        }
+                    ]
+                },
+                {
+                    "tipo": "radio",
+                    "label": "Seleccioar Sexo",
+                    "requerido": "true",
+                    "name": "sexo",
+                    "values": [
+                        {
+                            "value": "hombre",
+                            "label": "Hombre"
+                        },
+                        {
+                            "value": "mujer",
+                            "label": "Mujer"
+                        }
+                    ]
+                },
+                {
+                    "tipo": "check",
+                    "label": "Seleccionar Opción",
+                    "name": "contrato",
+                    "requerido":"true",
+                    "values":[
+                        {
+                            "value": "acepta",
+                            "label": "Acepto los Terminos y Condiciones del Servicio"
+                        }
+
+                    ]
+                },
+                {
+                    "tipo": "file",
+                    "label": "Adjuntar Archivo",
+                    "name": "pdf",
+                    "requerido":"true"
+                },
+                {
+                    "tipo":"textarea",
+                    "label":"Observaciones",
+                    "name":"observacion",
+                    "requerido":"true"
+                }
+            ]
+        }
+}
