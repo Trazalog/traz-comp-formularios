@@ -305,6 +305,7 @@ function obtenerExtension($archivo){
             case 'jpg': $ext = 'data:image/jpg;base64,';break;
             case 'png': $ext = 'data:image/png;base64,';break;
             case 'jpeg': $ext = 'data:image/jpeg;base64,';break;
+            case 'jfif': $ext = 'data:image/jpeg;base64,';break;
             case 'pjpeg': $ext = 'data:image/pjpeg;base64,';break;
             case 'wbmp': $ext = 'data:image/vnd.wap.wbmp;base64,';break;
             case 'webp': $ext = 'data:image/webp;base64,';break;
