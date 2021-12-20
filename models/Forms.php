@@ -33,7 +33,7 @@ class Forms extends CI_Model
             
             if ($o->name) {
 
-                if(!is_array($data[$o->name])){
+                if(!is_array($data[$o->name]) && !is_array($_FILES["-file-".$o->name]['tmp_name'])){
 
                     $o->valor = $data[$o->name];
                     $o->valor4_base64 = null;
@@ -50,30 +50,36 @@ class Forms extends CI_Model
                     
                     array_push($array, $o);
                 }else{
-                    foreach ($data[$o->name] as $i => $datos ) {
-                        $datoPlantilla = clone $o;
+                    if(!empty($data[$o->name])){
+                        foreach ($data[$o->name] as $i => $datos ) {
+                            $datoPlantilla = clone $o;
 
-                        $datoPlantilla->valor = $datos;
-                        
-                        $nom = "-file-".$datoPlantilla->name;
-                        
-                        if($datoPlantilla->tipo_dato == 'image' || $datoPlantilla->tipo_dato == 'file'){
-        
-                            if(!empty($_FILES[$nom]['tmp_name'][$i])){
-                                $datoPlantilla->valor4_base64 = base64_encode(file_get_contents($_FILES[$nom]['tmp_name'][$i]));
+                            $datoPlantilla->valor = $datos;
+                            
+                            $nom = "-file-".$datoPlantilla->name;
+                            
+                            if($datoPlantilla->tipo_dato == 'image' || $datoPlantilla->tipo_dato == 'file'){
+            
+                                if(!empty($_FILES[$nom]['tmp_name'][$i])){
+                                    $datoPlantilla->valor4_base64 = base64_encode(file_get_contents($_FILES[$nom]['tmp_name'][$i]));
+                                }else{
+                                    $datoPlantilla->valor4_base64 = NULL;
+                                }
+                                
                             }else{
                                 $datoPlantilla->valor4_base64 = NULL;
                             }
-                            
-                        }else{
-                            $datoPlantilla->valor4_base64 = NULL;
+
+                            array_push($array, $datoPlantilla);
+                            unset($datoPlantilla);
                         }
 
-                        array_push($array, $datoPlantilla);
-                        unset($datoPlantilla);
+                        unset($o);
+                    }else{
+                        $o->valor = NULL;
+                        $o->valor4_base64 = NULL;
+                        array_push($array, $o);
                     }
-
-                    unset($o);
                 }
             } else {
                 array_push($aux, $o);
