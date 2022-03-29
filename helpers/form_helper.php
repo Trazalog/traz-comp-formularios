@@ -173,7 +173,7 @@ function archivo($e)
         "<div class='".($e->columna ? $e->columna : 'col-md-12')."'>
             <div class='form-group'>
                 <label>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
-                <input class='form-control' id='$e->name' type='file' name='-file-$e->name' " . ($e->requerido ? req() : null). ">
+                <input class='form-control' id='$e->name' type='file' name='". ($e->multiple ? '-file-'.$e->name.'[]' : '-file-'.$e->name) . "' " . ($e->requerido ? req() : null). ">
                 <p class='help-block show-file'><a $file class='help-button col-sm-4 download' title='Descargar' download>
                     <iclass='fa fa-download'></i> Ver Adjunto</a>
                 </p>
