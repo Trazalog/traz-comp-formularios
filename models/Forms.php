@@ -9,9 +9,15 @@ class Forms extends CI_Model
     {
         parent::__construct();
     }
-
+    /**
+        * Guarda la instacia del formulario dinámico
+        * @param array datos de formulario
+        * @return 
+	*/
     public function guardar($form_id, $data = false)
     {
+        log_message('DEBUG',"#TRAZA | #TRAZ-COMP-FORMULARIOS | #FORMS | guardar()");
+        
         $items = $this->obtenerPlantilla($form_id);
         
         $newInfo = $this->db->select_max('info_id')->get('frm.instancias_formularios')->row('info_id') + 1;
@@ -19,39 +25,72 @@ class Forms extends CI_Model
         $array = array();
 
         $aux = array();
-
+        
         foreach ($items->items as $key => $o) {
 
             $o->info_id = $newInfo;
             unset($o->nombre);
-            unset($o->tipo);
             
             if ($o->name) {
-                $o->valor = ($data ? $data[$o->name] : null);
-                array_push($array, $o);
-            } else {
-                array_push($aux, $o);
-            }
 
-            if($o->tipo_dato == 'image' || $o->tipo_dato == 'file'){
-                $nom = "-file-".$o->name;
-                
-                if ($o->name) {
-                    if(!empty($_FILES[$nom]['tmp_name'])){
-                        $array[$key]->valor4_base64 = base64_encode(file_get_contents($_FILES[$nom]['tmp_name']));
-                    }else{
-                        $array[$key]->valor4_base64 = NULL;
+                if(!is_array($data[$o->name]) && !is_array($_FILES["-file-".$o->name]['tmp_name'])){
+
+                    $o->valor = $data[$o->name];
+                    $o->valor4_base64 = null;
+                    
+                    
+                    if($o->tipo_dato == 'image' || $o->tipo_dato == 'file'){
+                        
+                        $nom = "-file-".$o->name;
+                        
+                        if(!empty($_FILES[$nom]['tmp_name'])){
+                            $o->valor4_base64 = base64_encode(file_get_contents($_FILES[$nom]['tmp_name']));
+                        }
                     }
+                    
+                    array_push($array, $o);
                 }else{
-                    if(!empty($_FILES[$nom]['tmp_name'])){
-                        $aux[$key]->valor4_base64 = base64_encode(file_get_contents($_FILES[$nom]['tmp_name']));
+                    if(!empty($data[$o->name])){
+                        foreach ($data[$o->name] as $i => $datos ) {
+                            $datoPlantilla = clone $o;
+
+                            $datoPlantilla->valor = $datos;
+                            
+                            $nom = "-file-".$datoPlantilla->name;
+                            
+                            if($datoPlantilla->tipo_dato == 'image' || $datoPlantilla->tipo_dato == 'file'){
+            
+                                if(!empty($_FILES[$nom]['tmp_name'][$i])){
+                                    $datoPlantilla->valor4_base64 = base64_encode(file_get_contents($_FILES[$nom]['tmp_name'][$i]));
+                                }else{
+                                    $datoPlantilla->valor4_base64 = NULL;
+                                }
+                                
+                            }else{
+                                $datoPlantilla->valor4_base64 = NULL;
+                            }
+
+                            array_push($array, $datoPlantilla);
+                            unset($datoPlantilla);
+                        }
+
+                        unset($o);
                     }else{
-                        $array[$key]->valor4_base64 = NULL;
+                        $o->valor = NULL;
+                        $o->valor4_base64 = NULL;
+                        array_push($array, $o);
                     }
                 }
-            }else{
-                $array[$key]->valor4_base64 = NULL;
+            } else {
+                array_push($aux, $o);
+
+                if(!empty($_FILES[$nom]['tmp_name'])){
+                    $aux[$key]->valor4_base64 = base64_encode(file_get_contents($_FILES[$nom]['tmp_name']));
+                }else{
+                    $aux[$key]->valor4_base64 = NULL;
+                }
             }
+            unset($o);
         }
 
         if($aux && !$this->db->insert_batch('frm.instancias_formularios', $aux)) return FALSE;
@@ -81,7 +120,7 @@ class Forms extends CI_Model
 
     public function obtener($info_id)
     {
-        $this->db->select('name, label,valor, requerido, valo_id, orden, A.inst_id, A.form_id, tipo_dato, C.nombre, A.valor4_base64, A.columna');
+        $this->db->select('name, label,valor, requerido, valo_id, orden, A.inst_id, A.form_id, tipo_dato, C.nombre, A.valor4_base64, A.columna, A.multiple');
         $this->db->from('frm.instancias_formularios as A');
         $this->db->join('frm.formularios as C', 'C.form_id = A.form_id');
         $this->db->where('A.info_id', $info_id);
@@ -110,7 +149,7 @@ class Forms extends CI_Model
 
     public function obtenerPlantilla($id)
     {
-        $this->db->select('name, label, requerido, valo_id, orden, A.form_id, tipo_dato, C.nombre, A.columna');
+        $this->db->select('name, label, requerido, valo_id, orden, A.form_id, tipo_dato, C.nombre, A.columna, A.multiple');
         $this->db->from('frm.items as A');
         $this->db->join('frm.formularios as C', 'C.form_id = A.form_id');
         $this->db->where('A.form_id', $id);

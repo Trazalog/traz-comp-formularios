@@ -49,6 +49,8 @@ class Form extends CI_Controller
 
     public function guardar($info_id = false, $new = false)
     {
+        log_message('DEBUG',"#TRAZA | #TRAZ-COMP-FORMULARIOS | #FORM | guardar()");
+
         $data = $this->input->post();
         foreach ($data as $key => $o) {
 
@@ -62,9 +64,9 @@ class Form extends CI_Controller
                 unset($data[$key]);
             }
 
-            if (is_array($o)) {
-                $data[$key] = implode('-', $o);
-            }
+            // if (is_array($o)) {
+            //     $data[$key] = implode('-', $o);
+            // }
 
         }
 
