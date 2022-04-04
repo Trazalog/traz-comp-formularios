@@ -19,16 +19,11 @@ class Forms extends CI_Model
         log_message('DEBUG',"#TRAZA | #TRAZ-COMP-FORMULARIOS | #FORMS | guardar()");
         
         $items = $this->obtenerPlantilla($form_id);
-        
-        $newInfo = $this->db->select_max('info_id')->get('frm.instancias_formularios')->row('info_id') + 1;
-
         $array = array();
-
         $aux = array();
         
         foreach ($items->items as $key => $o) {
 
-            $o->info_id = $newInfo;
             unset($o->nombre);
             
             if ($o->name) {
@@ -95,6 +90,8 @@ class Forms extends CI_Model
 
         if($aux && !$this->db->insert_batch('frm.instancias_formularios', $aux)) return FALSE;
         if($array && !$this->db->insert_batch('frm.instancias_formularios', $array)) return FALSE;
+        
+        $newInfo = $this->db->select_max('info_id')->get('frm.instancias_formularios')->row('info_id');
 
         $this->instanciarVariables($form_id, $newInfo);
 
