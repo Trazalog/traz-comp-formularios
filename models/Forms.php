@@ -15,9 +15,7 @@ class Forms extends CI_Model
         * @return 
 	*/
     public function guardar($form_id, $data = false)
-    {
-        log_message('DEBUG',"#TRAZA | #TRAZ-COMP-FORMULARIOS | #FORMS | guardar()");
-        
+    {   
         $items = $this->obtenerPlantilla($form_id);
         $array = array();
         $aux = array();
@@ -94,6 +92,8 @@ class Forms extends CI_Model
         $newInfo = $this->db->select_max('info_id')->get('frm.instancias_formularios')->row('info_id');
 
         $this->instanciarVariables($form_id, $newInfo);
+
+        log_message('DEBUG',"#TRAZA | #TRAZ-COMP-FORMULARIOS | #FORMS | guardar() >> info_id generado ". $newInfo);
 
         return $newInfo;
     }
