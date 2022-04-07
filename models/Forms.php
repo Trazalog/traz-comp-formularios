@@ -176,10 +176,14 @@ class Forms extends CI_Model
         return $aux;
     }
 
-    public function obtenerValores($id)
-    {
-        $this->db->select('valor as value, valor as label');
-        return $this->db->get_where('frm.utl_tablas', array('tabla' => $id))->result();
+    /**
+        * Obtengo los valores almacenados en core.tablas para cargar las listas de valores
+        * @param id nombre columna tabla
+        * @return array valores coincidentes
+	*/
+    public function obtenerValores($id){
+        $this->db->select('tabl_id as value, descripcion as label,valor');
+        return $this->db->get_where('core.tablas', array('tabla' => empresa()."-".$id))->result();
     }
 
     public function listado()
