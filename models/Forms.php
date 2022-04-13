@@ -111,8 +111,8 @@ class Forms extends CI_Model
             }
             $this->db->update('frm.instancias_formularios');
         }
-
-        return;
+        log_message('DEBUG',"#TRAZA | #TRAZ-COMP-FORMULARIOS | #FORMS | actualizar() >> info_id actualizado: ". $info_id);
+        return $info_id;
     }
 
     public function obtener($info_id)
