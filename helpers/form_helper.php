@@ -301,7 +301,7 @@ function getFormXEmpresa($nombre, $emprId){
 //Funcion para obtener la extension del archivo codificado
 function obtenerExtension($archivo){
     $ext = explode('.',$archivo);
-        switch(strtolower($ext[1])){
+        switch(strtolower(array_pop($ext))){
             case 'jpg': $ext = 'data:image/jpg;base64,';break;
             case 'png': $ext = 'data:image/png;base64,';break;
             case 'jpeg': $ext = 'data:image/jpeg;base64,';break;
