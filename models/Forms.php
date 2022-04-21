@@ -85,6 +85,7 @@ class Forms extends CI_Model
             }
             unset($o);
         }
+        $this->db->save_queries = FALSE;// Para que no cachee la query
 
         if($aux && !$this->db->insert_batch('frm.instancias_formularios', $aux)) return FALSE;
         if($array && !$this->db->insert_batch('frm.instancias_formularios', $array)) return FALSE;
