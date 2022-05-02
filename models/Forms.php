@@ -15,20 +15,13 @@ class Forms extends CI_Model
         * @return 
 	*/
     public function guardar($form_id, $data = false)
-    {
-        log_message('DEBUG',"#TRAZA | #TRAZ-COMP-FORMULARIOS | #FORMS | guardar()");
-        
+    {   
         $items = $this->obtenerPlantilla($form_id);
-        
-        $newInfo = $this->db->select_max('info_id')->get('frm.instancias_formularios')->row('info_id') + 1;
-
         $array = array();
-
         $aux = array();
         
         foreach ($items->items as $key => $o) {
 
-            $o->info_id = $newInfo;
             unset($o->nombre);
             
             if ($o->name) {
@@ -92,11 +85,16 @@ class Forms extends CI_Model
             }
             unset($o);
         }
+        $this->db->save_queries = FALSE;// Para que no cachee la query
 
         if($aux && !$this->db->insert_batch('frm.instancias_formularios', $aux)) return FALSE;
         if($array && !$this->db->insert_batch('frm.instancias_formularios', $array)) return FALSE;
+        
+        $newInfo = $this->db->select_max('info_id')->get('frm.instancias_formularios')->row('info_id');
 
         $this->instanciarVariables($form_id, $newInfo);
+
+        log_message('DEBUG',"#TRAZA | #TRAZ-COMP-FORMULARIOS | #FORMS | guardar() >> info_id generado ". $newInfo);
 
         return $newInfo;
     }
@@ -114,8 +112,8 @@ class Forms extends CI_Model
             }
             $this->db->update('frm.instancias_formularios');
         }
-
-        return;
+        log_message('DEBUG',"#TRAZA | #TRAZ-COMP-FORMULARIOS | #FORMS | actualizar() >> info_id actualizado: ". $info_id);
+        return $info_id;
     }
 
     public function obtener($info_id)
@@ -179,10 +177,14 @@ class Forms extends CI_Model
         return $aux;
     }
 
-    public function obtenerValores($id)
-    {
-        $this->db->select('valor as value, valor as label');
-        return $this->db->get_where('frm.utl_tablas', array('tabla' => $id))->result();
+    /**
+        * Obtengo los valores almacenados en core.tablas para cargar las listas de valores
+        * @param id nombre columna tabla
+        * @return array valores coincidentes
+	*/
+    public function obtenerValores($id){
+        $this->db->select('tabl_id as value, descripcion as label,valor,eliminado');
+        return $this->db->get_where('core.tablas', array('tabla' => empresa()."-".$id, 'eliminado' => 'false'))->result();
     }
 
     public function listado()
