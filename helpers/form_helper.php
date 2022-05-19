@@ -279,9 +279,13 @@ function nuevoForm($form_id)
         return $res;
     }
 }
-
-function getForm($info_id)
-{
+/**
+	* Obtiene el la instacia del formulario dinamico
+	* @param integer $info_id
+	* @return array con instancia formulario dibujado
+*/
+function getForm($info_id){
+    log_message('DEBUG',"#TRAZA | #TRAZ-COMP-FORMULARIOS | HELPER | getForm() -> info_id : ". $info_id);
     if ($info_id) {
         $ci = &get_instance();
         $ci->load->model(FRM . 'Forms');
