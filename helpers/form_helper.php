@@ -97,7 +97,7 @@ function select($e)
         "<div class='".($e->columna ? $e->columna : 'col-md-12')."'>
             <div class='form-group'>
                 <label for=''>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
-                <select style='width: 100%;' class='form-control frm-select' name='$e->name' ". ($e->requerido ? req() : null).">$val</select>
+                <select style='width: 100%;' class='form-control frm-select' name='$e->name' ". ($e->requerido ?  'data-bv-notempty data-bv-notempty-message="Campo Obligatorio *"' : null).">$val</select>
             </div>
         </div>";
 }
