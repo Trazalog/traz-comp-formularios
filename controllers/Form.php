@@ -28,16 +28,24 @@ class Form extends CI_Controller
 
         echo json_encode($data);
     }
+    /**
+	* Genera una nueva instancia del form_id enviado
+	* @param integer $form_id 
+	* @return array instancia formulario generado
+	*/
+    public function obtenerNuevo($form = '', $modal = false){
+        log_message('DEBUG','#TRAZA | #TRAZ-COMP-FORMULARIOS | #FORM | obtenerNuevo() form_id ->'. $form);
+        if(!empty($form)){
 
-    public function obtenerNuevo($form, $modal = false)
-    {
-
-        $data['html'] = form($this->Forms->obtenerPlantilla($form), $modal);
-
-        if($modal){
-            echo json_encode($data);
+            $data['html'] = form($this->Forms->obtenerPlantilla($form), $modal);
+            
+            if($modal){
+                echo json_encode($data);
+            }else{
+                echo $data['html'];
+            }
         }else{
-            echo $data['html'];
+            echo '<h5>No se especificó un formulario.</h5>';
         }
     }
 
