@@ -97,7 +97,7 @@ function select($e)
         "<div class='".($e->columna ? $e->columna : 'col-md-12')."'>
             <div class='form-group'>
                 <label for=''>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
-                <select class='form-control frm-select' name='$e->name' ". ($e->requerido ? req() : null).">$val</select>
+                <select style='width: 100%;' class='form-control frm-select' name='$e->name' ". ($e->requerido ?  'data-bv-notempty data-bv-notempty-message="Campo Obligatorio *"' : null).">$val</select>
             </div>
         </div>";
 }
@@ -279,9 +279,13 @@ function nuevoForm($form_id)
         return $res;
     }
 }
-
-function getForm($info_id)
-{
+/**
+	* Obtiene el la instacia del formulario dinamico
+	* @param integer $info_id
+	* @return array con instancia formulario dibujado
+*/
+function getForm($info_id){
+    log_message('DEBUG',"#TRAZA | #TRAZ-COMP-FORMULARIOS | HELPER | getForm() -> info_id : ". $info_id);
     if ($info_id) {
         $ci = &get_instance();
         $ci->load->model(FRM . 'Forms');
