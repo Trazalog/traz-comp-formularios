@@ -141,7 +141,7 @@ function radio($e)
     foreach ($e->values as $key => $o) {
         $html .= "<div class='radio'>
                         <label>
-                            <input type='radio' name='$e->name' class='flat-red i-check' value='$o->value' " . ($key == 0 && $e->requerido ? null : null) . " " . ((isset($e->valor) && $e->valor == $o->value) ? 'checked' : null) . ">
+                            <input type='radio' name='$o->tabla' class='flat-red i-check' value='$o->value' " . ($key == 0 && $e->requerido ? null : null) . " " . ((isset($e->valor) && $e->valor == $o->value) ? 'checked' : null) . ">
                             $o->label
                         </label>
                     </div>";

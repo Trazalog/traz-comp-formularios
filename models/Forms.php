@@ -183,7 +183,7 @@ class Forms extends CI_Model
         * @return array valores coincidentes
 	*/
     public function obtenerValores($id){
-        $this->db->select('tabl_id as value, descripcion as label,valor,eliminado');
+        $this->db->select('tabl_id as value, descripcion as label,valor,eliminado,tabla');
         return $this->db->get_where('core.tablas', array('tabla' => empresa()."-".$id, 'eliminado' => 'false'))->result();
     }
 
