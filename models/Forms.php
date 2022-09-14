@@ -75,13 +75,14 @@ class Forms extends CI_Model
                     }
                 }
             } else {
-                array_push($aux, $o);
-
                 if(!empty($_FILES[$nom]['tmp_name'])){
-                    $aux[$key]->valor4_base64 = base64_encode(file_get_contents($_FILES[$nom]['tmp_name']));
+                    $o->valor4_base64 = base64_encode(file_get_contents($_FILES[$nom]['tmp_name']));
                 }else{
-                    $aux[$key]->valor4_base64 = NULL;
+                    $o->valor4_base64 = NULL;
                 }
+                $o->valor = !empty($data[empresa()."-".$o->valo_id])? $data[empresa()."-".$o->valo_id] : '';
+                unset($o->values);
+                array_push($aux, $o);
             }
             unset($o);
         }
