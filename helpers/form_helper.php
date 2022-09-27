@@ -186,7 +186,7 @@ function textarea($e)
     return
         "<div class='".($e->columna ? $e->columna : 'col-md-12')."'>
             <div class='form-group'>
-                <label>$e->label</label>
+                <label>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
                 <textarea class='form-control' rows='3' placeholder='Ingrese Texto...' id='$e->name' type='file' name='$e->name' " . ($e->requerido ? req() : null)
         . ">" . (isset($e->valor) ? $e->valor : null) . "</textarea>
         </div>
