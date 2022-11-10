@@ -28,7 +28,7 @@ class Forms extends CI_Model
 
                 if(!is_array($data[$o->name]) && !is_array($_FILES["-file-".$o->name]['tmp_name'])){
 
-                    $o->valor = $data[$o->name];
+                    $o->valor = ($o->tipo_dato == 'radio') ? $data[empresa()."-".$o->name] : $data[$o->name];
                     $o->valor4_base64 = null;
                     
                     
