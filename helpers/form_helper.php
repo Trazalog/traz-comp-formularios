@@ -72,7 +72,7 @@ if (!function_exists('form')) {
             }
         }
 
-        return $html . '<button type="button" class="btn btn-primary pull-right frm-save ' . ($modal ? 'hidden' : null) . '" onclick="frmGuardar(this)">Guardar</button></form></fieldset>';
+        return $html . '<div style="float:right" class="col-md-12"><button type="button" class="btn btn-primary pull-right frm-save ' . ($modal ? 'hidden' : null) . '" onclick="frmGuardar(this)">Guardar</button></div></form></fieldset>';
     }
 }
 function input($e)
