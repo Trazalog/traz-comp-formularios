@@ -28,7 +28,7 @@ class Forms extends CI_Model
 
                 if(!is_array($data[$o->name]) && !is_array($_FILES["-file-".$o->name]['tmp_name'])){
 
-                    $o->valor = $data[$o->name];
+                    $o->valor = ($o->tipo_dato == 'radio') ? $data[empresa()."-".$o->name] : $data[$o->name];
                     $o->valor4_base64 = null;
                     
                     
@@ -75,13 +75,14 @@ class Forms extends CI_Model
                     }
                 }
             } else {
-                array_push($aux, $o);
-
                 if(!empty($_FILES[$nom]['tmp_name'])){
-                    $aux[$key]->valor4_base64 = base64_encode(file_get_contents($_FILES[$nom]['tmp_name']));
+                    $o->valor4_base64 = base64_encode(file_get_contents($_FILES[$nom]['tmp_name']));
                 }else{
-                    $aux[$key]->valor4_base64 = NULL;
+                    $o->valor4_base64 = NULL;
                 }
+                $o->valor = !empty($data[empresa()."-".$o->valo_id])? $data[empresa()."-".$o->valo_id] : '';
+                unset($o->values);
+                array_push($aux, $o);
             }
             unset($o);
         }
@@ -98,13 +99,22 @@ class Forms extends CI_Model
 
         return $newInfo;
     }
-
-    public function actualizar($info_id, $data)
-    {
+    /**
+        * Actualiza la instacia del formulario dinámico enviada por parámetro
+        * NOTA: divide la cadena por el caracter '-' ya que los valores pueden venir anidados con la empresa
+        * @param array datos de formulario
+        * @return $info_id
+	*/
+    public function actualizar($info_id, $data){
         foreach ($data as $key => $o) {
             if(!$key) continue;
             $this->db->where('info_id', $info_id);
-            $this->db->where('name', $key);
+            if(!strpos($key,'-')){
+                $this->db->where('name', $key);
+            }else{
+                $aux = explode('-',$key);
+                $this->db->where('name', array_pop($aux));
+            }
             $this->db->set('valor', $o);
             if(!empty($_FILES["-file-".$key]['tmp_name'])){
                 $valor4_base64 = base64_encode(file_get_contents($_FILES["-file-".$key]['tmp_name']));
@@ -183,7 +193,7 @@ class Forms extends CI_Model
         * @return array valores coincidentes
 	*/
     public function obtenerValores($id){
-        $this->db->select('tabl_id as value, descripcion as label,valor,eliminado');
+        $this->db->select('tabl_id as value, descripcion as label,valor,eliminado,tabla');
         return $this->db->get_where('core.tablas', array('tabla' => empresa()."-".$id, 'eliminado' => 'false'))->result();
     }
 

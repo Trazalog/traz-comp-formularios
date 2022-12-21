@@ -141,7 +141,7 @@ function radio($e)
     foreach ($e->values as $key => $o) {
         $html .= "<div class='radio'>
                         <label>
-                            <input type='radio' name='$e->name' class='flat-red i-check' value='$o->value' " . ($key == 0 && $e->requerido ? null : null) . " " . ((isset($e->valor) && $e->valor == $o->value) ? 'checked' : null) . ">
+                            <input type='radio' name='$o->tabla' class='flat-red i-check' value='$o->value' " . ($key == 0 && $e->requerido ? null : null) . " " . ((isset($e->valor) && $e->valor == $o->value) ? 'checked' : null) . ">
                             $o->label
                         </label>
                     </div>";
@@ -186,7 +186,7 @@ function textarea($e)
     return
         "<div class='".($e->columna ? $e->columna : 'col-md-12')."'>
             <div class='form-group'>
-                <label>$e->label</label>
+                <label>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
                 <textarea class='form-control' rows='3' placeholder='Ingrese Texto...' id='$e->name' type='file' name='$e->name' " . ($e->requerido ? req() : null)
         . ">" . (isset($e->valor) ? $e->valor : null) . "</textarea>
         </div>
