@@ -237,7 +237,7 @@ function image($e){
     return
     "<div class='".($e->columna ? $e->columna : 'col-md-12')."'>
         <label for='$e->label'>$e->label" . ($e->requerido ? "<strong class='text-danger'> *</strong>" : null) . ":</label>
-        <div class='form-group imgConte'>
+        <div class='form-group imgConte centrar'>
         <label for='$indice'>
             <div class='imgEdit'>
                 <input class='form-control' value='" . (isset($e->valor) ? $e->valor : null) . "' type='file' id='$indice'  name='". ($e->multiple ? '-file-'.$e->name.'[]' : '-file-'.$e->name) . "' " . ($e->requerido ? req() : null) . " onchange='previewFile(this)' accept='image/*' capture/>   
@@ -262,7 +262,7 @@ function number($e){
 
 function btnAgregar($e){
     return
-        "<div class='".($e->columna ? $e->columna : 'col-md-12')."' style='text-align: center;'>
+        "<div class='".($e->columna ? $e->columna : 'col-md-12')."'>
             <div class='form-group'>
                 <button type='button' class='btn btn-primary' onclick='agregar$e->name()'><i class='fa fa-plus'></i> $e->label</button>
             </div>
