@@ -35,6 +35,10 @@ if (!function_exists('form')) {
                     $html .= select($e);
                     break;
 
+                case 'service':
+                        $html .= select($e);
+                        break;
+
                 case 'date':
                     $html .= datepicker($e);
                     break;
