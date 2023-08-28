@@ -216,7 +216,8 @@ class Forms extends CI_Model
         try {
             //Obtengo la url
             $url = $id;
-            $rsp = $this->REST->callAPI('GET', $url);
+            $token = array('Authorization: Bearer '.TOKEN_API_MANAGER);
+            $rsp = $this->REST->callAPI('GET', $url, null, $token);
                     
             if (!$rsp['status']) {
     
