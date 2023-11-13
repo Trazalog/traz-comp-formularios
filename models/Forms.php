@@ -5,9 +5,13 @@
 class Forms extends CI_Model
 {
 
+    private $REST;
+
     public function __construct()
     {
         parent::__construct();
+        $this->REST = &get_instance()->rest;
+
     }
     /**
         * Guarda la instacia del formulario dinámico
@@ -143,12 +147,14 @@ class Forms extends CI_Model
         $aux->id = $info_id;
         $aux->items = $res->result();
 
+
         foreach ($aux->items as $key => $o) {
 
             if ($o->tipo_dato == 'radio' || $o->tipo_dato == 'check' || $o->tipo_dato == 'select') {
-
                 $aux->items[$key]->values = $this->obtenerValores($o->valo_id);
-
+            }
+            if ($o->tipo_dato == 'service') {
+                $aux->items[$key]->values = $this->obtenerValoresServicio($o->valo_id);
             }
         }
 
@@ -157,6 +163,7 @@ class Forms extends CI_Model
 
     public function obtenerPlantilla($id)
     {
+
         $this->db->select('name, label, requerido, valo_id, orden, A.form_id, tipo_dato, C.nombre, A.columna, A.multiple');
         $this->db->from('frm.items as A');
         $this->db->join('frm.formularios as C', 'C.form_id = A.form_id');
@@ -178,9 +185,10 @@ class Forms extends CI_Model
         foreach ($aux->items as $key => $o) {
 
             if ($o->tipo_dato == 'radio' || $o->tipo_dato == 'check' || $o->tipo_dato == 'select') {
-
                 $aux->items[$key]->values = $this->obtenerValores($o->valo_id);
-
+            }
+            if ($o->tipo_dato == 'service') {
+                $aux->items[$key]->values = $this->obtenerValoresServicio($o->valo_id);
             }
         }
 
@@ -195,6 +203,54 @@ class Forms extends CI_Model
     public function obtenerValores($id){
         $this->db->select('tabl_id as value, descripcion as label,valor,eliminado,tabla');
         return $this->db->get_where('core.tablas', array('tabla' => empresa()."-".$id, 'eliminado' => 'false'))->result();
+    }
+    
+
+    /**
+        * Obtengo los valores provistos por un servicio REST
+        * Se espera una respueta JSON, con un arreglo que contenga minimamente los campos label y value para cada elemento
+        * @param id url
+        * @return array valores coincidentes
+	*/
+    public function obtenerValoresServicio($id){
+        try {
+            //Obtengo la url
+            $url = $id;
+            $token = array('Authorization: Bearer '.TOKEN_API_MANAGER);
+            $rsp = $this->REST->callAPI('GET', $url, null, $token);
+                    
+            if (!$rsp['status']) {
+    
+                log_message('DEBUG', '#TRAZA | #FRM >> Error obteniendo valores de url '+ url );
+                $aux = json_decode('[{"value":"","label":"Error al invocar el servicio","valor":"","eliminado":false,"tabla":""}]');
+                return $aux;
+            }
+
+            //Limpio la respuesta de elementos raiz y me quedo con los elementos del arreglo. Si no tuviese arreglo, devolvera una lista vacia
+            // Busca la posición de los caracteres "[" y "]"
+            $start_pos = strpos($rsp['data'], '[');
+            $end_pos = strpos($rsp['data'], ']');
+
+            // Verifica si se encontraron los caracteres "[" y "]" en la cadena
+            if ($start_pos !== false && $end_pos !== false) {
+                // Extrae el texto entre los caracteres "[" y "]"
+                $new_string = substr($rsp['data'], $start_pos , $end_pos - $start_pos +1);
+
+            } else {
+                // Si no se encuentran los caracteres "[" y "]" en la cadena, muestra un mensaje de error
+                return null;
+            }
+            log_message('DEBUG', '#TRAZA DATOS RRUIZ '.$new_string);
+
+
+            return json_decode($new_string);
+            
+        } catch (Exception $e) {
+            log_message('ERROR', '#TRAZA | #FRM >> Error al invocar servicio '.$id);
+            $aux = json_decode('[{"value":"","label":"Error al invocar el servicio","valor":"","eliminado":false,"tabla":""}]');
+            return $aux;
+         
+        }
     }
 
     public function listado()
