@@ -217,8 +217,15 @@ class Forms extends CI_Model
             //Obtengo la url
             $url = $id;
             $token = array('Authorization: Bearer '.TOKEN_API_MANAGER);
-            $rsp = $this->REST->callAPI('GET', $url, null, $token);
+/* 
+            $headers = array(
+                'Authorization: Bearer '.TOKEN_API_MANAGER,
+                'ApiAuthorization: '.TOKEN_TANGO,
+                'Company: '.COMPANY_TANGO
+            ); */
+            $rsp = $this->REST->callAPI('GET', $url, null, $headers);
                     
+            /* Version anterior para dataservice */
             if (!$rsp['status']) {
     
                 log_message('DEBUG', '#TRAZA | #FRM >> Error obteniendo valores de url '+ url );
@@ -228,7 +235,7 @@ class Forms extends CI_Model
 
             //Limpio la respuesta de elementos raiz y me quedo con los elementos del arreglo. Si no tuviese arreglo, devolvera una lista vacia
             // Busca la posición de los caracteres "[" y "]"
-            $start_pos = strpos($rsp['data'], '[');
+             $start_pos = strpos($rsp['data'], '[');
             $end_pos = strpos($rsp['data'], ']');
 
             // Verifica si se encontraron los caracteres "[" y "]" en la cadena
@@ -243,8 +250,35 @@ class Forms extends CI_Model
             log_message('DEBUG', '#TRAZA DATOS RRUIZ '.$new_string);
 
 
-            return json_decode($new_string);
+            return json_decode($new_string); 
+
+            /* version nueva para llamado a api delta IV */
+            /*if (!$rsp['status']) {
+                log_message('DEBUG', '#TRAZA | #FRM >> Error obteniendo valores de url ' . $url );
+                $aux = json_decode('[{"value":"","label":"Error al invocar el servicio","valor":"","eliminado":false,"tabla":""}]');
+                return $aux;
+            }
             
+            // Decodifica el JSON completo
+            $data = json_decode($rsp['data'], true);
+            
+            // Verifica que existan los datos esperados
+            if (isset($data['resultData']['list']) && is_array($data['resultData']['list'])) {
+                $list = $data['resultData']['list'];
+                foreach ($list as &$item) {
+                    $nro_pedido = isset($item['NRO_PEDIDO']) ? $item['NRO_PEDIDO'] : '';
+                    // Elimina solo los guiones, mantiene los espacios
+                    $nro_pedido_formateado = str_replace('-', '', $nro_pedido);
+                    $razon_social = isset($item['RAZON_SOCIAL_CLIENTE']) ? trim($item['RAZON_SOCIAL_CLIENTE']) : '';
+                    $item['label'] = $nro_pedido_formateado . ' - ' . $razon_social;
+                    $item['value'] = $nro_pedido_formateado;
+                }
+                // Si necesitas devolverlo como objeto:
+                return json_decode(json_encode($list));
+            } else {
+                // Si no hay datos, devuelve un array vacío o un error
+                return [];
+            }*/
         } catch (Exception $e) {
             log_message('ERROR', '#TRAZA | #FRM >> Error al invocar servicio '.$id);
             $aux = json_decode('[{"value":"","label":"Error al invocar el servicio","valor":"","eliminado":false,"tabla":""}]');
