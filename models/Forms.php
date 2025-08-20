@@ -217,16 +217,19 @@ class Forms extends CI_Model
             //Obtengo la url
             $url = $id;
             $token = array('Authorization: Bearer '.TOKEN_API_MANAGER);
-/* 
-            $headers = array(
+ 
+            //para delta
+           /*  $headers = array(
                 'Authorization: Bearer '.TOKEN_API_MANAGER,
                 'ApiAuthorization: '.TOKEN_TANGO,
                 'Company: '.COMPANY_TANGO
-            ); */
+            );  
             $rsp = $this->REST->callAPI('GET', $url, null, $headers);
+            */
                     
-            /* Version anterior para dataservice */
-            if (!$rsp['status']) {
+            /* Version para dataservice */
+            $rsp = $this->REST->callAPI('GET', $url, null, $token);
+           if (!$rsp['status']) {
     
                 log_message('DEBUG', '#TRAZA | #FRM >> Error obteniendo valores de url '+ url );
                 $aux = json_decode('[{"value":"","label":"Error al invocar el servicio","valor":"","eliminado":false,"tabla":""}]');
@@ -252,8 +255,8 @@ class Forms extends CI_Model
 
             return json_decode($new_string); 
 
-            /* version nueva para llamado a api delta IV */
-            /*if (!$rsp['status']) {
+            /* version nueva para llamado a api delta IV (no se usa la porque api de delta es lenta) */
+           /* if (!$rsp['status']) {
                 log_message('DEBUG', '#TRAZA | #FRM >> Error obteniendo valores de url ' . $url );
                 $aux = json_decode('[{"value":"","label":"Error al invocar el servicio","valor":"","eliminado":false,"tabla":""}]');
                 return $aux;
@@ -273,6 +276,7 @@ class Forms extends CI_Model
                     $item['label'] = $nro_pedido_formateado . ' - ' . $razon_social;
                     $item['value'] = $nro_pedido_formateado;
                 }
+                 log_message('ERROR', '#TRAZA DATOS RRUIZ '.$list);
                 // Si necesitas devolverlo como objeto:
                 return json_decode(json_encode($list));
             } else {
