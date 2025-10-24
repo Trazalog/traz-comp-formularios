@@ -38,6 +38,12 @@ if (!function_exists('form')) {
                 case 'service':
                         $html .= select($e);
                         break;
+                case 'urlConsultor':
+                        $html .= select($e);
+                        break;
+                case 'urlEvaluador':
+                        $html .= select($e);
+                        break;                  
 
                 case 'date':
                     $html .= datepicker($e);

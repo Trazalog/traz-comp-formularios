@@ -190,6 +190,12 @@ class Forms extends CI_Model
             if ($o->tipo_dato == 'service') {
                 $aux->items[$key]->values = $this->obtenerValoresServicio($o->valo_id);
             }
+            if ($o->tipo_dato == 'urlEvaluador'){
+                 $aux->items[$key]->values = $this->obtenerValoresDesdeUrlEvaluador($o->valo_id);
+            }
+            if ($o->tipo_dato == 'urlConsultor'){
+                 $aux->items[$key]->values = $this->obtenerValoresDesdeUrlConsultor($o->valo_id);
+            }
         }
 
         return $aux;
@@ -289,6 +295,66 @@ class Forms extends CI_Model
             return $aux;
          
         }
+    }
+
+    /**
+        * Obtengo los valores llamando a una URL dentro de un controllers
+        * Se espera una respueta JSON, con un arreglo que contenga minimamente los campos label y value para cada elemento
+        * @param url
+        * @return array valores coincidentes
+	*/
+    public function obtenerValoresDesdeUrlEvaluador($url)
+    {
+        // Llamar a la URL
+        $response = file_get_contents($url);
+
+        // Extraer contenido JSON 
+        if (strpos($response, '<body>') !== false) {
+            $response = strip_tags($response); // Saca HTML y deja solo JSON
+        }
+
+        // Decodificar JSON
+        $data = json_decode($response);
+
+        // Armar respuesta en formato similar a obtenerValores()
+        $result = [];
+        if (!empty($data)) {
+            foreach ($data as $item) {
+                $result[] = (object)[
+                    'value' => $item->dni,
+                    'label' => $item->nombre
+                ];
+            }
+        }
+
+        return $result;
+    }
+
+    public function obtenerValoresDesdeUrlConsultor($url)
+    {
+        // Llamar a la URL
+        $response = file_get_contents($url);
+
+        // Extraer contenido JSON 
+        if (strpos($response, '<body>') !== false) {
+            $response = strip_tags($response); // Saca HTML y deja solo JSON
+        }
+
+        // Decodificar JSON
+        $data = json_decode($response);
+
+        // Armar respuesta en formato similar a obtenerValores()
+        $result = [];
+        if (!empty($data)) {
+            foreach ($data as $item) {
+                $result[] = (object)[
+                    'value' => $item->registro,
+                    'label' => $item->nombre
+                ];
+            }
+        }
+
+        return $result;
     }
 
     public function listado()
