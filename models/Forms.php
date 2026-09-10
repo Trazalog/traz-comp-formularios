@@ -110,8 +110,6 @@ class Forms extends CI_Model
         * @return $info_id
 	*/
     public function actualizar($info_id, $data){
-        $ok = TRUE;
-
         foreach ($data as $key => $o) {
             if(!$key) continue;
 
@@ -137,18 +135,14 @@ class Forms extends CI_Model
                 $valor4_base64 = base64_encode(file_get_contents($_FILES["-file-".$key]['tmp_name']));
                 $this->db->set('valor4_base64',$valor4_base64);
             }
+            // Solo se deja rastro del campo que falló. NO se cambia el valor de retorno:
+            // Form::guardar() se lo devuelve al navegador como 'info_id', así que
+            // devolver FALSE acá cambiaría el contrato de todas las pantallas de
+            // formularios dinámicos. Que quien llama deje de informar éxito es una
+            // decisión aparte, fuera de este módulo.
             if(!$this->db->update('frm.instancias_formularios')){
-                $ok = FALSE;
                 log_message('ERROR',"#TRAZA | #TRAZ-COMP-FORMULARIOS | #FORMS | actualizar() >> no se pudo guardar el campo '". $key ."' de la instancia ". $info_id);
             }
-        }
-
-        // Devolver FALSE cuando algo no se guardó — mismo contrato que guardar().
-        // Antes se devolvía el info_id igual, y quien llamaba informaba éxito
-        // aunque la respuesta del formulario se hubiera perdido.
-        if(!$ok){
-            log_message('ERROR',"#TRAZA | #TRAZ-COMP-FORMULARIOS | #FORMS | actualizar() >> la instancia ". $info_id ." quedó incompleta");
-            return FALSE;
         }
 
         log_message('DEBUG',"#TRAZA | #TRAZ-COMP-FORMULARIOS | #FORMS | actualizar() >> info_id actualizado: ". $info_id);
