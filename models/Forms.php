@@ -110,8 +110,21 @@ class Forms extends CI_Model
         * @return $info_id
 	*/
     public function actualizar($info_id, $data){
+        $ok = TRUE;
+
         foreach ($data as $key => $o) {
             if(!$key) continue;
+
+            // Los campos de selección múltiple llegan como array (el input se llama 'campo[]').
+            // La instancia tiene UNA sola fila por campo —generarInstancia() la crea vacía— y el
+            // re-dibujado marca cada opción buscándola como substring de 'valor'
+            // (form_helper.php:133), así que el conjunto se guarda concatenado. Es lo mismo que
+            // ya hace Form::guardarJson(). Sin esto PHP convierte el array a la cadena 'Array'
+            // y PostgreSQL rechaza la sentencia completa: el campo no se guarda.
+            if(is_array($o)){
+                $o = implode('-', $o);
+            }
+
             $this->db->where('info_id', $info_id);
             if(!strpos($key,'-')){
                 $this->db->where('name', $key);
@@ -124,8 +137,20 @@ class Forms extends CI_Model
                 $valor4_base64 = base64_encode(file_get_contents($_FILES["-file-".$key]['tmp_name']));
                 $this->db->set('valor4_base64',$valor4_base64);
             }
-            $this->db->update('frm.instancias_formularios');
+            if(!$this->db->update('frm.instancias_formularios')){
+                $ok = FALSE;
+                log_message('ERROR',"#TRAZA | #TRAZ-COMP-FORMULARIOS | #FORMS | actualizar() >> no se pudo guardar el campo '". $key ."' de la instancia ". $info_id);
+            }
         }
+
+        // Devolver FALSE cuando algo no se guardó — mismo contrato que guardar().
+        // Antes se devolvía el info_id igual, y quien llamaba informaba éxito
+        // aunque la respuesta del formulario se hubiera perdido.
+        if(!$ok){
+            log_message('ERROR',"#TRAZA | #TRAZ-COMP-FORMULARIOS | #FORMS | actualizar() >> la instancia ". $info_id ." quedó incompleta");
+            return FALSE;
+        }
+
         log_message('DEBUG',"#TRAZA | #TRAZ-COMP-FORMULARIOS | #FORMS | actualizar() >> info_id actualizado: ". $info_id);
         return $info_id;
     }
