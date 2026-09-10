@@ -112,6 +112,17 @@ class Forms extends CI_Model
     public function actualizar($info_id, $data){
         foreach ($data as $key => $o) {
             if(!$key) continue;
+
+            // Los campos de selección múltiple llegan como array (el input se llama 'campo[]').
+            // La instancia tiene UNA sola fila por campo —generarInstancia() la crea vacía— y el
+            // re-dibujado marca cada opción buscándola como substring de 'valor'
+            // (form_helper.php:133), así que el conjunto se guarda concatenado. Es lo mismo que
+            // ya hace Form::guardarJson(). Sin esto PHP convierte el array a la cadena 'Array'
+            // y PostgreSQL rechaza la sentencia completa: el campo no se guarda.
+            if(is_array($o)){
+                $o = implode('-', $o);
+            }
+
             $this->db->where('info_id', $info_id);
             if(!strpos($key,'-')){
                 $this->db->where('name', $key);
@@ -124,8 +135,16 @@ class Forms extends CI_Model
                 $valor4_base64 = base64_encode(file_get_contents($_FILES["-file-".$key]['tmp_name']));
                 $this->db->set('valor4_base64',$valor4_base64);
             }
-            $this->db->update('frm.instancias_formularios');
+            // Solo se deja rastro del campo que falló. NO se cambia el valor de retorno:
+            // Form::guardar() se lo devuelve al navegador como 'info_id', así que
+            // devolver FALSE acá cambiaría el contrato de todas las pantallas de
+            // formularios dinámicos. Que quien llama deje de informar éxito es una
+            // decisión aparte, fuera de este módulo.
+            if(!$this->db->update('frm.instancias_formularios')){
+                log_message('ERROR',"#TRAZA | #TRAZ-COMP-FORMULARIOS | #FORMS | actualizar() >> no se pudo guardar el campo '". $key ."' de la instancia ". $info_id);
+            }
         }
+
         log_message('DEBUG',"#TRAZA | #TRAZ-COMP-FORMULARIOS | #FORMS | actualizar() >> info_id actualizado: ". $info_id);
         return $info_id;
     }
