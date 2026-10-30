@@ -12,7 +12,7 @@ class Form extends CI_Controller
     public function obtener($info, $modal = false)
     {
 
-        $html = form($this->Forms->obtener($info), $modal);
+        $html = form($this->Forms->obtenerOptimizado($info), $modal);
 
         if ($modal) {
             $modal = new StdClass();
@@ -37,7 +37,7 @@ class Form extends CI_Controller
         log_message('DEBUG','#TRAZA | #TRAZ-COMP-FORMULARIOS | #FORM | obtenerNuevo() form_id ->'. $form);
         if(!empty($form)){
 
-            $data['html'] = form($this->Forms->obtenerPlantilla($form), $modal);
+            $data['html'] = form($this->Forms->obtenerPlantillaOptimizada($form), $modal);
             
             if($modal){
                 echo json_encode($data);

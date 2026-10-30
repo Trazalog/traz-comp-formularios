@@ -221,6 +221,123 @@ class Forms extends CI_Model
     }
 
     /**
+        * Igual que obtenerPlantilla() pero resolviendo items, valores de listas
+        * y próximo info_id en UNA sola consulta (evita el N+1 y los round trips).
+        * @param integer form_id
+        * @return StdClass plantilla del formulario
+    */
+    public function obtenerPlantillaOptimizada($id)
+    {
+        $prefijo = $this->db->escape(empresa() . '-');
+
+        $values = "(SELECT COALESCE(json_agg(json_build_object("
+            . "'value', T.tabl_id, 'label', T.descripcion, 'valor', T.valor, "
+            . "'eliminado', T.eliminado, 'tabla', T.tabla)), json_build_array())"
+            . ' FROM core.tablas T'
+            . ' WHERE T.tabla = ' . $prefijo . ' || "A".valo_id AND T.eliminado = false) AS values_json';
+
+        $this->db->select(
+            '"A".name, "A".label, "A".requerido, "A".valo_id, "A".orden, "A".form_id, "A".tipo_dato, '
+            . '"C".nombre, "A".columna, "A".multiple, '
+            . '(SELECT COALESCE(MAX(info_id), 0) + 1 FROM frm.instancias_formularios) AS next_info, '
+            . $values,
+            false
+        );
+        $this->db->from('frm.items as A');
+        $this->db->join('frm.formularios as C', 'C.form_id = A.form_id');
+        $this->db->where('A.form_id', $id);
+        $this->db->where('A.eliminado', false);
+        $this->db->order_by('A.orden');
+
+        $res = $this->db->get();
+        $items = $res->result();
+
+        $aux = new StdClass();
+        $aux->info_id = false;
+        $aux->form_id = $id;
+        $aux->nombre = $res->num_rows() ? $res->row()->nombre : null;
+        $aux->id = !empty($items) ? $items[0]->next_info : false;
+        $aux->items = $items;
+
+        foreach ($aux->items as $o) {
+            if ($o->tipo_dato == 'radio' || $o->tipo_dato == 'check' || $o->tipo_dato == 'select') {
+                $decoded = json_decode($o->values_json);
+                $o->values = is_array($decoded) ? $decoded : array();
+            }
+            if ($o->tipo_dato == 'service') {
+                $o->values = $this->obtenerValoresServicio($o->valo_id);
+            }
+            if ($o->tipo_dato == 'urlEvaluador') {
+                $o->values = $this->obtenerValoresDesdeUrlEvaluador($o->valo_id);
+            }
+            if ($o->tipo_dato == 'urlConsultor') {
+                $o->values = $this->obtenerValoresDesdeUrlConsultor($o->valo_id);
+            }
+            unset($o->values_json);
+            unset($o->next_info);
+        }
+
+        return $aux;
+    }
+
+    /**
+        * Igual que obtener() pero resolviendo los valores de listas en la misma
+        * consulta de la instancia (evita el N+1).
+        * @param integer info_id
+        * @return StdClass instancia del formulario
+    */
+    public function obtenerOptimizado($info_id)
+    {
+        $prefijo = $this->db->escape(empresa() . '-');
+
+        $values = "(SELECT COALESCE(json_agg(json_build_object("
+            . "'value', T.tabl_id, 'label', T.descripcion, 'valor', T.valor, "
+            . "'eliminado', T.eliminado, 'tabla', T.tabla)), json_build_array())"
+            . ' FROM core.tablas T'
+            . ' WHERE T.tabla = ' . $prefijo . ' || "A".valo_id AND T.eliminado = false) AS values_json';
+
+        $this->db->select(
+            '"A".name, "A".label, "A".valor, "A".requerido, "A".valo_id, "A".orden, "A".inst_id, '
+            . '"A".form_id, "A".tipo_dato, "C".nombre, "A".valor4_base64, "A".columna, "A".multiple, '
+            . $values,
+            false
+        );
+        $this->db->from('frm.instancias_formularios as A');
+        $this->db->join('frm.formularios as C', 'C.form_id = A.form_id');
+        $this->db->where('A.info_id', $info_id);
+        $this->db->where('A.eliminado', false);
+        $this->db->order_by('A.orden');
+
+        $res = $this->db->get();
+        $items = $res->result();
+
+        $aux = new StdClass();
+        $aux->info_id = $info_id;
+        $aux->nombre = $res->num_rows() ? $res->row()->nombre : null;
+        $aux->id = $info_id;
+        $aux->items = $items;
+
+        foreach ($aux->items as $o) {
+            if ($o->tipo_dato == 'radio' || $o->tipo_dato == 'check' || $o->tipo_dato == 'select') {
+                $decoded = json_decode($o->values_json);
+                $o->values = is_array($decoded) ? $decoded : array();
+            }
+            if ($o->tipo_dato == 'service') {
+                $o->values = $this->obtenerValoresServicio($o->valo_id);
+            }
+            if ($o->tipo_dato == 'urlEvaluador') {
+                $o->values = $this->obtenerValoresDesdeUrlEvaluador($o->valo_id);
+            }
+            if ($o->tipo_dato == 'urlConsultor') {
+                $o->values = $this->obtenerValoresDesdeUrlConsultor($o->valo_id);
+            }
+            unset($o->values_json);
+        }
+
+        return $aux;
+    }
+
+    /**
         * Obtengo los valores almacenados en core.tablas para cargar las listas de valores
         * @param id nombre columna tabla
         * @return array valores coincidentes
@@ -256,7 +373,7 @@ class Forms extends CI_Model
             $rsp = $this->REST->callAPI('GET', $url, null, $token);
            if (!$rsp['status']) {
     
-                log_message('DEBUG', '#TRAZA | #FRM >> Error obteniendo valores de url '+ url );
+                log_message('DEBUG', '#TRAZA | #FRM >> Error obteniendo valores de url ' . $url);
                 $aux = json_decode('[{"value":"","label":"Error al invocar el servicio","valor":"","eliminado":false,"tabla":""}]');
                 return $aux;
             }
